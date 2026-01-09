@@ -1,6 +1,6 @@
 # project_name
 
-A short description of the project.
+Hej
 
 ## Project structure
 
