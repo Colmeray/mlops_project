@@ -3,7 +3,7 @@ requires = ["uv_build>=0.9.22,<0.10.0"]
 build-backend = "uv_build"
 
 [project]
-name = "project_name"
+name = "project"
 version = "0.0.1"
 description = "A short description of the project."
 authors = [
