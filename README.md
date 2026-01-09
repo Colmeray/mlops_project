@@ -1,4 +1,4 @@
-# project_name
+# Project
 The goal of this project is to build a machine learning pipeline that can classify houseplant species from images. We will use the Kaggle “house plant species” dataset, which contains roughly 14800 images across 47 species. The images are both close up and full size and vary in quality. The amount of pictures in each class also varies from around 60-550. This class imbalance is something we have to take into account when designing our pipeline.
 
 The broader vision is that this classifier could be one component in a larger application that helps users identify plants in their home and then gives information about fx light requirements, weekly watering reminders etc. However, we focus specifically on the core classification task in this project: given an image predict the correct plant species.
