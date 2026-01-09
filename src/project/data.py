@@ -3,6 +3,12 @@ from pathlib import Path
 import typer
 from torch.utils.data import Dataset
 
+import kagglehub
+
+# Download latest version
+path = kagglehub.dataset_download("kacpergregorowicz/house-plant-species")
+
+print("Path to dataset files:", path)
 
 class MyDataset(Dataset):
     """My custom dataset."""
@@ -27,3 +33,5 @@ def preprocess(data_path: Path, output_folder: Path) -> None:
 
 if __name__ == "__main__":
     typer.run(preprocess)
+
+print(path)
