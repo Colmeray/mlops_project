@@ -1,6 +1,6 @@
 # project_name
 
-Hejsa
+Hej
 
 ## Project structure
 
