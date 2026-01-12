@@ -30,6 +30,8 @@ The directory structure of the project looks like this:
 ├── notebooks/                # Jupyter notebooks
 ├── reports/                  # Reports
 │   └── figures/
+│   └── README.md/
+│   └── reports.py/
 ├── src/                      # Source code
 │   ├── project_name/
 │   │   ├── __init__.py
