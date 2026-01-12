@@ -10,6 +10,10 @@ class Model(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.layer(x)
 
+
+
+
+
 if __name__ == "__main__":
     model = Model()
     x = torch.rand(1)
