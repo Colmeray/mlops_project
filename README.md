@@ -54,6 +54,30 @@ The directory structure of the project looks like this:
 └── tasks.py                  # Project tasks
 ```
 
+# Instructions 
+
+### initialization and data
+Start off by cloning the remote repo and getting the right dependecies with uv
+```bash
+git clone https://github.com/Colmeray/mlops_project.git
+cd mlops_project
+uv sync
+```
+
+To get the kaggle dataset downloaded locally in data folder start of with running
+```bash
+uv run python src/project/data.py ensure-dataset --data-dir data/raw
+```
+
+Preprocessing the data (just label mapping for now) run which stores the meta data in the data/preprocessed folder:
+```bash
+ uv run python src/project/data.py preprocess data/raw/house_plant_species data/preprocessed
+```
+
+
+
+
+
 
 Created using [mlops_template](https://github.com/SkafteNicki/mlops_template),
 a [cookiecutter template](https://github.com/cookiecutter/cookiecutter) for getting
