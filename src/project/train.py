@@ -65,6 +65,7 @@ def train():
     epochs = 5
     for epoch in range(1, epochs + 1):
         # ---- train ----
+        print(f"epoch {epoch} is running:\n")
         model.train()
         train_loss = 0.0
         correct = 0
@@ -76,6 +77,8 @@ def train():
 
             logits = model(x)
             loss = loss_fn(logits, y)
+
+            print(loss.item())               # just so we can follow along <3
 
             optimizer.zero_grad()
             loss.backward()
@@ -112,7 +115,7 @@ def train():
         val_acc = val_correct / val_total
 
         print(
-            f"Epoch {epoch:02d} | "
+            f"\nEpoch {epoch:02d} | "
             f"train loss {train_loss:.4f} acc {train_acc:.3f} | "
             f"val loss {val_loss:.4f} acc {val_acc:.3f}"
         )
