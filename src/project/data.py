@@ -5,9 +5,14 @@ import os
 import shutil
 import kagglehub  
 import json
+from PIL import Image
+import torch
+from typing import Optional, Callable, Any
 
 app = typer.Typer()
 
+# Define allowed file types 
+IMG_EXTS = {".jpg", ".jpeg", ".png", ".webp"}
 
 
 @app.command("ensure-dataset")
@@ -39,9 +44,6 @@ def preprocess(raw_root: Path, out_root: Path) -> None:
       out_root/meta/classes.json     meta data (class name to label mapping)
       out_root/index/all.csv         one row per image: relative_path,label,class_name
     """
-
-    # Define allowed file types 
-    IMG_EXTS = {".jpg", ".jpeg", ".png", ".webp"}
 
     # getting the paths and make directories
     raw_root = raw_root.resolve()
@@ -96,7 +98,35 @@ def preprocess(raw_root: Path, out_root: Path) -> None:
 
 
 
+class MyDataset(Dataset):
+    def __init__(self, root: Path, transform: Optional[Callable[[Any], Any]] = None):
+        self.root = Path(root)
+        self.transform = transform
 
+        self.classes = sorted([d.name for d in self.root.iterdir() if d.is_dir()])
+        if not self.classes:
+            raise ValueError(f"No class folders found in {self.root}")
+
+        self.class_to_idx = {c: i for i, c in enumerate(self.classes)}
+
+        self.samples: list[tuple[Path, int]] = []
+        for c in self.classes:
+            for p in (self.root / c).rglob("*"):
+                if p.is_file() and p.suffix.lower() in IMG_EXTS:
+                    self.samples.append((p, self.class_to_idx[c]))
+
+        if not self.samples:
+            raise ValueError(f"No images found under {self.root} with {sorted(IMG_EXTS)}")
+
+    def __len__(self) -> int:
+        return len(self.samples)
+
+    def __getitem__(self, i: int):
+        p, y = self.samples[i]
+        x = Image.open(p).convert("RGB")
+        if self.transform:
+            x = self.transform(x)
+        return x, torch.tensor(y, dtype=torch.long)
 
 
 
