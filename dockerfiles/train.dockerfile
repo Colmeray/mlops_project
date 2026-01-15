@@ -9,4 +9,4 @@ COPY src src/
 
 RUN uv sync --frozen
 
-ENTRYPOINT ["uv", "run", "src/project_name/train.py"]
+ENTRYPOINT ["uv", "run", "src/project/train.py"]
