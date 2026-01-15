@@ -4,8 +4,8 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, Subset, random_split
 
-from src.project.data import MyDataset   # adjust import
-from src.project.model import Model      # adjust import
+from project.data import MyDataset   # adjust import
+from project.model import Model      # adjust import
 
 from torchvision import transforms
 

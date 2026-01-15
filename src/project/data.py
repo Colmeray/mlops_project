@@ -1,8 +1,6 @@
 from pathlib import Path
 import typer
 from torch.utils.data import Dataset
-import os
-import shutil
 import kagglehub  
 import json
 from PIL import Image
@@ -10,21 +8,11 @@ import torch
 from typing import Optional, Callable, Any
 from pathlib import Path
 from typing import Any, Callable, Optional
-
 import csv
-import json
-import torch
-from torch.utils.data import Dataset
-from PIL import Image
-
-
 
 
 
 app = typer.Typer()
-
-# Define allowed file types 
-IMG_EXTS = {".jpg", ".jpeg", ".png", ".webp"}
 
 
 @app.command("ensure-dataset")
@@ -56,6 +44,9 @@ def preprocess(raw_root: Path, out_root: Path) -> None:
       out_root/meta/classes.json     meta data (class name to label mapping)
       out_root/index/all.csv         one row per image: relative_path,label,class_name
     """
+
+    # Define allowed file types 
+    IMG_EXTS = {".jpg", ".jpeg", ".png", ".webp"}
 
     # getting the paths and make directories
     raw_root = raw_root.resolve()
