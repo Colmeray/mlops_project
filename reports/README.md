@@ -56,12 +56,12 @@ will check the repositories and the code to verify your answers.
 * [x] Make sure that all team members have write access to the GitHub repository (M5)
 * [x] Create a dedicated environment for you project to keep track of your packages (M2)
 * [x] Create the initial file structure using cookiecutter with an appropriate template (M6)
-* [ ] Fill out the `data.py` file such that it downloads whatever data you need and preprocesses it (if necessary) (M6)
-* [ ] Add a model to `model.py` and a training procedure to `train.py` and get that running (M6)
-* [ ] Remember to either fill out the `requirements.txt`/`requirements_dev.txt` files or keeping your
+* [x] Fill out the `data.py` file such that it downloads whatever data you need and preprocesses it (if necessary) (M6)
+* [x] Add a model to `model.py` and a training procedure to `train.py` and get that running (M6)
+* [x] Remember to either fill out the `requirements.txt`/`requirements_dev.txt` files or keeping your
     `pyproject.toml`/`uv.lock` up-to-date with whatever dependencies that you are using (M2+M6)
-* [ ] Remember to comply with good coding practices (`pep8`) while doing the project (M7)
-* [ ] Do a bit of code typing and remember to document essential parts of your code (M7)
+* [x] Remember to comply with good coding practices (`pep8`) while doing the project (M7)
+* [x] Do a bit of code typing and remember to document essential parts of your code (M7)
 * [ ] Setup version control for your data or part of your data (M8)
 * [ ] Add command line interfaces and project commands to your code where it makes sense (M9)
 * [ ] Construct one or multiple docker files for your code (M10)
@@ -168,7 +168,11 @@ s245465, s245509, s245647, s245243
 >
 > Answer:
 
---- question 4 fill here ---
+We managed dependencies with uv, which provides fast and reproducible depency resolution. All project dependencies and their version constraints are defined in pyproject.toml, including the required Python version. From this file, uv generates a lockfile (uv.lock) that pins exact package versions and resolved wheels, ensuring the environment is fully reproducible across machines. The development workflow is centered around this lockfile: we commit both pyproject.toml and uv.lock to version control, so every team member uses the same dependency graph. When dependencies change, we update pyproject.toml and regenerate the lockfile with uv lock, followed by uv sync to apply the changes. 
+For a new member to get an exact copy of the environment they would need to do the following:
+- Install uv and a compatible python version
+- Clone the repository 
+- Run uv sync, which automatically creates a virtual environment and installs all dependencies exactly as specified in uv.lock
 
 ### Question 5
 
@@ -248,7 +252,11 @@ s245465, s245509, s245647, s245243
 >
 > Answer:
 
---- question 9 fill here ---
+Yes, our workflow made use of both branches and pull requests to structure development and maintain code quality. We followed a branch-based workflow where the main branch represented the stable, working version of the project. Each team member worked on their own feature branch (for example, for data processing or model development), which allowed parallel development without interfering with others’ work.
+
+When a feature was ready, it was merged into main through a pull request. Pull requests were used to review changes, discuss design decisions, and catch potential bugs before they were integrated. This review step helped ensure that new code was consistent with the existing codebase and did not break the pipeline.
+
+Using branches and pull requests also gave us a clear project history and made it easy to revert changes if something went wrong. Overall, this workflow improved collaboration, reduced merge conflicts, and increased the reliability of the codebase.
 
 ### Question 10
 
