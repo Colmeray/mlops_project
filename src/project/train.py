@@ -9,9 +9,13 @@ from project.model import Model      # adjust import
 
 from torchvision import transforms
 
+# ---- NYE IMPORTS TIL PROFILER ----
+from torch.profiler import profile, ProfilerActivity, record_function
+
 
 def get_device() -> torch.device:
     if torch.cuda.is_available():
+        print("cuda virker!!")
         return torch.device("cuda")
     if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
         return torch.device("mps")
@@ -20,16 +24,18 @@ def get_device() -> torch.device:
 
 def train():
     transform = transforms.Compose([
-    transforms.Resize((224, 224)),   # pick size your model expects
-    transforms.ToTensor(),
-    ])      
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+    ])
+
     processed_root = Path("data/preprocessed")
     raw_root = Path("data/raw/house_plant_species")
 
-    dataset = MyDataset(processed_root=processed_root, raw_root=raw_root,transform=transform)  # + transform if you use it
-
-
-
+    dataset = MyDataset(
+        processed_root=processed_root,
+        raw_root=raw_root,
+        transform=transform,
+    )
 
     # split
     n = len(dataset)
@@ -45,7 +51,7 @@ def train():
         Subset(dataset, list(idx_train)),
         batch_size=32,
         shuffle=True,
-        num_workers=0,   # mac: start with 0, later try 2-4
+        num_workers=0,
         pin_memory=True,
     )
     val_loader = DataLoader(
@@ -60,65 +66,93 @@ def train():
 
     model = Model(num_classes=dataset.num_classes).to(device)
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
     print("training starting")
-    epochs = 5
-    for epoch in range(1, epochs + 1):
-        # ---- train ----
-        print(f"epoch {epoch} is running:\n")
-        model.train()
-        train_loss = 0.0
-        correct = 0
-        total = 0
+    epochs = 1
 
-        for x, y in train_loader:
-            x = x.to(device)
-            y = y.to(device)
+    # ================== TORCH PROFILER ==================
+    with profile(
+        activities=[
+            ProfilerActivity.CPU,
+            ProfilerActivity.CUDA,   # vigtigt hvis du bruger GPU
+        ],
+        schedule=torch.profiler.schedule(
+            wait=1,        # ignorer første batch
+            warmup=1,      # warmup
+            active=3,      # profiler 3 batches
+            repeat=2       # gentag 2 gange
+        ),
+        on_trace_ready=torch.profiler.tensorboard_trace_handler("./profiler_logs"),
+        record_shapes=True,
+        profile_memory=True,
+        with_stack=True,
+    ) as prof:
+        # ================================================
 
-            logits = model(x)
-            loss = loss_fn(logits, y)
+        for epoch in range(1, epochs + 1):
+            print(f"epoch {epoch} is running:\n")
+            model.train()
+            train_loss = 0.0
+            correct = 0
+            total = 0
 
-            print(loss.item())               # just so we can follow along <3
-
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-
-            train_loss += loss.item() * x.size(0)
-            pred = logits.argmax(dim=1)
-            correct += (pred == y).sum().item()
-            total += y.size(0)
-
-        train_loss /= total
-        train_acc = correct / total
-
-        # ---- val ----
-        model.eval()
-        val_loss = 0.0
-        val_correct = 0
-        val_total = 0
-
-        with torch.no_grad():
-            for x, y in val_loader:
+            for batch_idx, (x, y) in enumerate(train_loader):
                 x = x.to(device)
                 y = y.to(device)
 
-                logits = model(x)
-                loss = loss_fn(logits, y)
+                with record_function("forward_pass"):
+                    logits = model(x)
+                    loss = loss_fn(logits, y)
 
-                val_loss += loss.item() * x.size(0)
+                optimizer.zero_grad()
+
+                with record_function("backward"):
+                    loss.backward()
+
+                with record_function("optimizer_step"):
+                    optimizer.step()
+
+                train_loss += loss.item() * x.size(0)
                 pred = logits.argmax(dim=1)
-                val_correct += (pred == y).sum().item()
-                val_total += y.size(0)
+                correct += (pred == y).sum().item()
+                total += y.size(0)
 
-        val_loss /= val_total
-        val_acc = val_correct / val_total
+                print(f"{epoch} : {loss.item()}")
 
-        print(
-            f"\nEpoch {epoch:02d} | "
-            f"train loss {train_loss:.4f} acc {train_acc:.3f} | "
-            f"val loss {val_loss:.4f} acc {val_acc:.3f}"
-        )
+                # ---- MEGET VIGTIGT: STEP PROFILEREN HVER BATCH ----
+                prof.step()
+
+            train_loss /= total
+            train_acc = correct / total
+
+            # ---- val ----
+            model.eval()
+            val_loss = 0.0
+            val_correct = 0
+            val_total = 0
+
+            with torch.no_grad():
+                for x, y in val_loader:
+                    x = x.to(device)
+                    y = y.to(device)
+
+                    logits = model(x)
+                    loss = loss_fn(logits, y)
+
+                    val_loss += loss.item() * x.size(0)
+                    pred = logits.argmax(dim=1)
+                    val_correct += (pred == y).sum().item()
+                    val_total += y.size(0)
+
+            val_loss /= val_total
+            val_acc = val_correct / val_total
+
+            print(
+                f"Epoch {epoch:02d} | "
+                f"train loss {train_loss:.4f} acc {train_acc:.3f} | "
+                f"val loss {val_loss:.4f} acc {val_acc:.3f}"
+            )
 
 
 if __name__ == "__main__":
