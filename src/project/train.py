@@ -18,6 +18,7 @@ def get_device() -> torch.device:
         print("cuda virker!!")
         return torch.device("cuda")
     if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        print("Sindssyg mac M-chip aktiveret!")
         return torch.device("mps")
     return torch.device("cpu")
 
