@@ -44,4 +44,3 @@ def test_vgg16_backward_produces_gradients_on_head():
     assert model.backbone.classifier[-1].weight.grad is not None
     assert model.backbone.classifier[-1].bias.grad is not None
     assert all(p.grad is None for p in model.backbone.features.parameters())
-
