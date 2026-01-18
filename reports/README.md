@@ -168,10 +168,10 @@ s245465, s245509, s245647, s245243
 >
 > Answer:
 
-We managed dependencies with uv, which provides fast and reproducible depency resolution. All project dependencies and their version constraints are defined in pyproject.toml, including the required Python version. From this file, uv generates a lockfile (uv.lock) that pins exact package versions and resolved wheels, ensuring the environment is fully reproducible across machines. The development workflow is centered around this lockfile: we commit both pyproject.toml and uv.lock to version control, so every team member uses the same dependency graph. When dependencies change, we update pyproject.toml and regenerate the lockfile with uv lock, followed by uv sync to apply the changes. 
+We managed dependencies with uv, which provides fast and reproducible depency resolution. All project dependencies and their version constraints are defined in pyproject.toml, including the required Python version. From this file, uv generates a lockfile (uv.lock) that pins exact package versions and resolved wheels, ensuring the environment is fully reproducible across machines. The development workflow is centered around this lockfile: we commit both pyproject.toml and uv.lock to version control, so every team member uses the same dependency graph. When dependencies change, we update pyproject.toml and regenerate the lockfile with uv lock, followed by uv sync to apply the changes.
 For a new member to get an exact copy of the environment they would need to do the following:
 - Install uv and a compatible python version
-- Clone the repository 
+- Clone the repository
 - Run uv sync, which automatically creates a virtual environment and installs all dependencies exactly as specified in uv.lock
 
 ### Question 5

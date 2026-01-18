@@ -56,7 +56,7 @@ The directory structure of the project looks like this:
 └── tasks.py                  # Project tasks
 ```
 
-# Instructions 
+# Instructions
 
 ### initialization and data
 Start off by cloning the remote repo and getting the right dependecies with uv
