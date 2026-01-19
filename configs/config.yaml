@@ -1,0 +1,12 @@
+seed: 42
+val_frac: 0.1
+epochs: 5
+batch_size: 32
+lr: 1e-4
+model:
+  name: simple   # or vgg16
+  freeze_features: true
+wandb:
+  enable: true
+
+smoke_test: false

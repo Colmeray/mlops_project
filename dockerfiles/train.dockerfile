@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:python3.11-bookworm AS base
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm AS base
 WORKDIR /app
 
 # Copy lock + metadata først for caching
@@ -18,4 +18,4 @@ COPY src src/
 RUN uv sync --frozen
 
 # Run training as a module (more robust than file path)
-ENTRYPOINT ["uv", "run", "python", "-m", "project.train"]
+ENTRYPOINT ["uv", "run", "python", "-m", "src.project.train"]
