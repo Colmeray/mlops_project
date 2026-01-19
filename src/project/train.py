@@ -120,8 +120,8 @@ def train_impl(cfg, max_batches: int | None = None):
             total = 0
 
             for batch_idx, (x, y) in enumerate(train_loader):
-              if max_batches is not None and i > max_batches:
-                break
+                if max_batches is not None and batch_idx > max_batches:
+                    break
                 x = x.to(device)
                 y = y.to(device)
 
