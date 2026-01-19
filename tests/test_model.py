@@ -1,3 +1,5 @@
+# ruff: noqa: F401
+
 import json
 from pathlib import Path
 import torch
