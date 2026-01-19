@@ -4,7 +4,7 @@ import torch
 from PIL import Image
 from torchvision import transforms
 
-from src.project.data import preprocess, MyDataset
+from project.data import preprocess, MyDataset
 
 
 def test_preprocess(tmp_path: Path):
@@ -53,3 +53,10 @@ def test_preprocess(tmp_path: Path):
     assert x.shape == (3, 64, 64)
     assert y.dtype == torch.long
     assert 0 <= int(y.item()) < ds.num_classes
+
+
+
+
+
+
+
