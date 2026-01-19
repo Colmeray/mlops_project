@@ -6,10 +6,7 @@ import json
 from PIL import Image
 import torch
 from typing import Optional, Callable, Any
-from pathlib import Path
-from typing import Any, Callable, Optional
 import csv
-
 
 
 app = typer.Typer()
