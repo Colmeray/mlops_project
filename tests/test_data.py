@@ -36,9 +36,9 @@ def test_preprocess(tmp_path: Path):
     csv_path = out_root / "index" / "all.csv"
     lines = csv_path.read_text().strip().splitlines()
     assert lines[0].strip() == "relpath,label,class_name"
-    assert len(lines) >= 3 
+    assert len(lines) >= 3
 
-    # Test wether 
+    # Test wether
     transform = transforms.Compose([
         transforms.Resize((64, 64)),
         transforms.ToTensor(),
@@ -48,7 +48,7 @@ def test_preprocess(tmp_path: Path):
 
     assert len(ds) > 0
     x, y = ds[0]
-    
+
     assert isinstance(x, torch.Tensor)
     assert x.shape == (3, 64, 64)
     assert y.dtype == torch.long

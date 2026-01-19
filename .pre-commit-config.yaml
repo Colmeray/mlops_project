@@ -2,9 +2,29 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v4.5.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: check-added-large-files
+
+# ---- Python formatting ----
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.9
+    hooks:
+    -   id: ruff-format      # formatter (som black)
+    -   id: ruff             # linter
+
+# ---- Basic Python sanity ----
+-   repo: https://github.com/psf/black
+    rev: 23.9.1
+    hooks:
+    -   id: black
+
+# ---- Type checking (valgfrit men godt) ----
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.6.1
+    hooks:
+    -   id: mypy
+    files: src/

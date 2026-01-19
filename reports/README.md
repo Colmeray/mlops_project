@@ -79,10 +79,10 @@ will check the repositories and the code to verify your answers.
 * [ ] Write unit tests related to the data part of your code (M16)
 * [ ] Write unit tests related to model construction and or model training (M16)
 * [ ] Calculate the code coverage (M16)
-* [ ] Get some continuous integration running on the GitHub repository (M17)
-* [ ] Add caching and multi-os/python/pytorch testing to your continuous integration (M17)
-* [ ] Add a linting step to your continuous integration (M17)
-* [ ] Add pre-commit hooks to your version control setup (M18)
+* [x] Get some continuous integration running on the GitHub repository (M17)
+* [x] Add caching and multi-os/python/pytorch testing to your continuous integration (M17)
+* [x] Add a linting step to your continuous integration (M17)
+* [x] Add pre-commit hooks to your version control setup (M18)
 * [ ] Add a continues workflow that triggers when data changes (M19)
 * [ ] Add a continues workflow that triggers when changes to the model registry is made (M19)
 * [ ] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
@@ -168,10 +168,13 @@ s245465, s245509, s245647, s245243
 >
 > Answer:
 
-We managed dependencies with uv, which provides fast and reproducible depency resolution. All project dependencies and their version constraints are defined in pyproject.toml, including the required Python version. From this file, uv generates a lockfile (uv.lock) that pins exact package versions and resolved wheels, ensuring the environment is fully reproducible across machines. The development workflow is centered around this lockfile: we commit both pyproject.toml and uv.lock to version control, so every team member uses the same dependency graph. When dependencies change, we update pyproject.toml and regenerate the lockfile with uv lock, followed by uv sync to apply the changes. 
+We managed dependencies with uv, which provides fast and reproducible depency resolution. All project dependencies and their version constraints are defined in pyproject.toml, including the required Python version. From this file, uv generates a lockfile (uv.lock) that pins exact package versions and resolved wheels, ensuring the environment is fully reproducible across machines.
+
+The development workflow is centered around this lockfile: we commit both pyproject.toml and uv.lock to version control, so every team member uses the same dependency graph. When dependencies change, we update pyproject.toml and regenerate the lockfile with uv lock, followed by uv sync to apply the changes.
+
 For a new member to get an exact copy of the environment they would need to do the following:
 - Install uv and a compatible python version
-- Clone the repository 
+- Clone the repository
 - Run uv sync, which automatically creates a virtual environment and installs all dependencies exactly as specified in uv.lock
 
 ### Question 5
@@ -271,7 +274,11 @@ Using branches and pull requests also gave us a clear project history and made i
 >
 > Answer:
 
-We did not use DVC in our project. However, using DVC would have been beneficial for managing and versioning our dataset and processed data. For example, our project relied on a large image dataset downloaded from Kaggle and later processed into structured metadata (classes.json) and an index file (all.csv). With DVC, we could have tracked different versions of the raw dataset, preprocessing outputs, and even trained model checkpoints in a reproducible way. This would make it easier for team members to retrieve the exact same data state, compare different preprocessing pipelines, and roll back to earlier versions if something went wrong. Additionally, DVC would allow us to store large files outside Git while still keeping lightweight pointers under version control, improving collaboration, storage efficiency, and experiment reproducibility.
+We did not use DVC in our project. However, using DVC would have been beneficial for managing and versioning our dataset and processed data. For example, our project relied on a large image dataset downloaded from Kaggle and later processed into structured metadata (classes.json) and an index file (all.csv).
+
+With DVC, we could have tracked different versions of the raw dataset, preprocessing outputs, and even trained model checkpoints in a reproducible way. This would make it easier for team members to retrieve the exact same data state, compare different preprocessing pipelines, and roll back to earlier versions if something went wrong.
+
+Additionally, DVC would allow us to store large files outside Git while still keeping lightweight pointers under version control, improving collaboration, storage efficiency, and experiment reproducibility.
 
 ### Question 11
 
@@ -288,7 +295,19 @@ We did not use DVC in our project. However, using DVC would have been beneficial
 >
 > Answer:
 
---- question 11 fill here ---
+We use GitHub Actions for continuous integration in our project. Our CI setup consists of several automated workflows that run whenever changes are pushed to the main branch or when a pull request is opened.
+
+We have a unit testing workflow that runs our tests using pytest on multiple operating systems (Ubuntu, macOS, and Windows) and on multiple Python versions (3.11 and 3.12). This ensures that our code works consistently across different environments. The workflow also uses caching to speed up dependency installation.
+
+We also have a linting workflow based on ruff, which checks code formatting and quality on every push and pull request. This helps us catch errors early and keep the code readable and consistent.
+
+In addition, we run a pre-commit workflow that automatically executes all hooks defined in .pre-commit-config.yaml before code can be merged. This enforces basic quality checks such as removing trailing whitespace and validating YAML files.
+
+To keep our dependencies up to date, we use Dependabot, which automatically creates pull requests when new versions of Python packages are available. We also have a scheduled workflow that updates our pre-commit hooks weekly.
+
+Overall, our CI setup helps prevent bugs, maintain code quality, and keep our project secure and reproducible.
+
+Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/tests.yaml
 
 ## Running code and tracking experiments
 
