@@ -271,7 +271,7 @@ Using branches and pull requests also gave us a clear project history and made i
 >
 > Answer:
 
---- question 10 fill here ---
+We did not use DVC in our project. However, using DVC would have been beneficial for managing and versioning our dataset and processed data. For example, our project relied on a large image dataset downloaded from Kaggle and later processed into structured metadata (classes.json) and an index file (all.csv). With DVC, we could have tracked different versions of the raw dataset, preprocessing outputs, and even trained model checkpoints in a reproducible way. This would make it easier for team members to retrieve the exact same data state, compare different preprocessing pipelines, and roll back to earlier versions if something went wrong. Additionally, DVC would allow us to store large files outside Git while still keeping lightweight pointers under version control, improving collaboration, storage efficiency, and experiment reproducibility.
 
 ### Question 11
 
