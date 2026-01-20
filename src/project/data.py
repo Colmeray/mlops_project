@@ -80,7 +80,7 @@ def preprocess(raw_root: Path, out_root: Path) -> None:
 
     # 3) write one big index CSV
     lines = ["relpath,label,class_name"]
-    
+
     n = 0
     for class_name in classes:
         class_dir = raw_root / class_name
