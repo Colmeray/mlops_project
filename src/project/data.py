@@ -1,13 +1,11 @@
 from pathlib import Path
 import typer
+from typing import Optional, Callable, Any
 from torch.utils.data import Dataset
 import kagglehub  
 import json
 from PIL import Image
 import torch
-from typing import Optional, Callable, Any
-from pathlib import Path
-from typing import Any, Callable, Optional
 import csv
 
 
@@ -55,7 +53,7 @@ def preprocess(raw_root: Path, out_root: Path) -> None:
     index_dir = out_root / "index"
     meta_dir.mkdir(parents=True, exist_ok=True)
     index_dir.mkdir(parents=True, exist_ok=True)
-
+    
 
     # 1) classes = folder names
     classes = sorted([d.name for d in raw_root.iterdir() if d.is_dir()])
@@ -82,6 +80,7 @@ def preprocess(raw_root: Path, out_root: Path) -> None:
 
     # 3) write one big index CSV
     lines = ["relpath,label,class_name"]
+    
     n = 0
     for class_name in classes:
         class_dir = raw_root / class_name
