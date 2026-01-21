@@ -12,8 +12,17 @@ Beyond the model itself, we will build a clean and reproducible pipeline coverin
 The directory structure of the project looks like this:
 ```txt
 ├── .github/                  # Github actions and dependabot
+│   ├── agents/
+│       └── dtu_mlops_agent.md
+│   ├── prompts/
+│       └── add_test.prompt.md
 │   ├── dependabot.yaml
 │   └── workflows/
+│       └── data-changes.yaml
+│       └── linting.yaml
+│       └── model-registry-changes.yaml
+│       └── pre-commit-update.yaml
+│       └── pre-commit.yaml
 │       └── tests.yaml
 ├── configs/                  # Configuration files
 ├── data/                     # Data directory
@@ -28,6 +37,7 @@ The directory structure of the project looks like this:
 │       └── index.md
 ├── models/                   # Trained models
 ├── notebooks/                # Jupyter notebooks
+├── outputs/                  
 ├── reports/                  # Reports
 │   └── figures/
 │   └── README.md/
@@ -46,13 +56,14 @@ The directory structure of the project looks like this:
 │   ├── test_api.py
 │   ├── test_data.py
 │   └── test_model.py
+├── wandb/
+│   └── latest-run
 ├── .gitignore
 ├── .pre-commit-config.yaml
 ├── LICENSE
 ├── pyproject.toml            # Python project file
 ├── README.md                 # Project README
-├── requirements.txt          # Project requirements
-├── requirements_dev.txt      # Development requirements
+├── uv.lock      
 └── tasks.py                  # Project tasks
 ```
 

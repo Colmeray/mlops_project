@@ -67,8 +67,8 @@ will check the repositories and the code to verify your answers.
 * [ ] Construct one or multiple docker files for your code (M10)
 * [ ] Build the docker files locally and make sure they work as intended (M10)
 * [ ] Write one or multiple configurations files for your experiments (M11)
-* [ ] Used Hydra to load the configurations and manage your hyperparameters (M11)
-* [ ] Use profiling to optimize your code (M12)
+* [x] Used Hydra to load the configurations and manage your hyperparameters (M11)
+* [x] Use profiling to optimize your code (M12)
 * [ ] Use logging to log important events in your code (M14)
 * [ ] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
 * [ ] Consider running a hyperparameter optimization sweep (M14)
@@ -76,9 +76,9 @@ will check the repositories and the code to verify your answers.
 
 ### Week 2
 
-* [ ] Write unit tests related to the data part of your code (M16)
-* [ ] Write unit tests related to model construction and or model training (M16)
-* [ ] Calculate the code coverage (M16)
+* [x] Write unit tests related to the data part of your code (M16)
+* [x] Write unit tests related to model construction and or model training (M16)
+* [x] Calculate the code coverage (M16)
 * [x] Get some continuous integration running on the GitHub repository (M17)
 * [x] Add caching and multi-os/python/pytorch testing to your continuous integration (M17)
 * [x] Add a linting step to your continuous integration (M17)
@@ -148,7 +148,13 @@ s245465, s245509, s245647, s245243
 >
 > Answer:
 
---- question 3 fill here ---
+Yes, we used two open-source packages that were not covered in the course: kagglehub and Pillow.
+
+We used kagglehub to automatically download and cache the dataset from Kaggle, which made the data acquisition step fully reproducible and removed the need for manual downloads.
+
+We used Pillow (PIL) to load and process images before converting them to tensors for training. It allowed us to easily open, convert, and validate image files in different formats.
+
+All other libraries used in the project (such as PyTorch and Typer) were already part of the course framework.
 
 ## Coding environment
 
@@ -206,7 +212,10 @@ For a new member to get an exact copy of the environment they would need to do t
 >
 > Answer:
 
---- question 6 fill here ---
+Yes, we used tools to keep the code clean and consistent.
+We used Ruff for both linting and formatting, which helped us automatically find mistakes and keep the same coding style in all files. We also ran these checks using GitHub Actions, so every change is tested before being merged.We used Python type hints in several parts of the project to make it clear what kind of data each function expects and returns.
+
+These concepts are important in larger projects because many people may work on the same code. If the code is messy or unclear, it becomes hard to understand and easy to break. Linting, typing, and documentation help make the code easier to read, safer to change, and simpler to maintain.
 
 ## Version control
 
@@ -225,7 +234,13 @@ For a new member to get an exact copy of the environment they would need to do t
 >
 > Answer:
 
---- question 7 fill here ---
+In total we implemented 6 tests.
+
+One test checks the data pipeline: preprocess creates the expected output files (classes.json and all.csv) and that MyDataset can load images and return tensors with the correct shape and label type.
+
+Four tests check the models: both VGG16Transfer and SimpleModel produce outputs with the correct shape, and the VGG16 transfer setup correctly freezes the feature extractor while still allowing gradients on the classifier head.
+
+Finally, one test is a training smoke test that runs one batch and verifies the training loop returns valid metrics.
 
 ### Question 8
 
@@ -240,7 +255,11 @@ For a new member to get an exact copy of the environment they would need to do t
 >
 > Answer:
 
---- question 8 fill here ---
+The total code coverage of our project is 82%, which means that most of our source code is executed when running the test suite. This shows that the most important parts of the system, such as the data pipeline, models, and training logic, are well tested.
+
+However, even if we had 100% coverage, we would not trust the code to be completely error free. Coverage only measures whether a line of code was executed, not whether the result was correct or whether all edge cases were tested. Logical mistakes, unexpected inputs, and performance issues can still exist even when every line is covered by a test.
+
+Code coverage is therefore a useful indicator of how well the project is tested, but it should not be seen as proof that the system is perfect. Reliable software also requires meaningful test cases, good design, and continuous validation.
 
 ### Question 9
 
