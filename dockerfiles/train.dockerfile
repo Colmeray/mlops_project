@@ -7,12 +7,13 @@ COPY README.md README.md
 
 RUN uv sync --frozen --no-install-project
 
+COPY configs ./configs
 COPY src src/
 
 RUN uv sync --frozen
 
 ENTRYPOINT ["sh", "-lc", "\
   uv run -m project.data ensure-dataset && \
-  uv run -m project.data preprocess --raw-root data/raw --out-root data/processed && \
+  uv run -m project.data preprocess --raw-root data/raw --out-root data/preprocessed && \
   uv run -m project.train \
 "]

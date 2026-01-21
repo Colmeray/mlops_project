@@ -37,7 +37,7 @@ def train_impl(cfg, max_batches: int | None = None):
                      std=(0.229, 0.224, 0.225))
     ])      
     processed_root = Path("data/preprocessed")
-    raw_root = Path("data/raw/house_plant_species")
+    raw_root = Path("data/raw")
 
     dataset = MyDataset(processed_root=processed_root, raw_root=raw_root,transform=transform)  
     num_classes = dataset.num_classes 
