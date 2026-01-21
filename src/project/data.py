@@ -33,9 +33,11 @@ def ensure_dataset(data_dir: Path = Path("data/raw")) -> None:
 
 
 
-
 @app.command("preprocess")
-def preprocess(raw_root: Path, out_root: Path) -> None:
+def preprocess(
+    raw_root: Path = typer.Option(..., "--raw-root", exists=True, file_okay=False, dir_okay=True),
+    out_root: Path = typer.Option(..., "--out-root", file_okay=False, dir_okay=True),
+) -> None:
     """
     Creates:
       out_root/meta/classes.json     meta data (class name to label mapping)

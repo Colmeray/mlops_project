@@ -1,5 +1,6 @@
 FROM ghcr.io/astral-sh/uv:python3.13-bookworm AS base
 WORKDIR /app
+ENV PYTHONUNBUFFERED=1
 
 COPY uv.lock uv.lock
 COPY pyproject.toml pyproject.toml
@@ -14,6 +15,6 @@ RUN uv sync --frozen
 
 ENTRYPOINT ["sh", "-lc", "\
   uv run -m project.data ensure-dataset && \
-  uv run -m project.data preprocess --raw-root data/raw --out-root data/preprocessed && \
-  uv run -m project.train \
+  uv run -m project.data preprocess data/raw/house_plant_species data/preprocessed && \
+  uv run -u -m project.train \
 "]
