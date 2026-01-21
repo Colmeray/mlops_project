@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.13"]
+        python-version: ["3.12"]
 
     steps:
       - name: Checkout
@@ -36,9 +36,5 @@ jobs:
       - name: PyTorch sanity check
         run: uv run python -c "import torch; print('torch', torch.__version__); print('cuda', torch.cuda.is_available())"
 
-      - name: Run tests
-        run: uv run pytest -q
-
-      - name: Coverage report
+      - name: Run tests with coverage
         run: uv run coverage run -m pytest && uv run coverage report -m
-
