@@ -13,7 +13,7 @@ import csv
 
 
 app = typer.Typer()
-
+    
 
 @app.command("ensure-dataset")
 def ensure_dataset(data_dir: Path = Path("data/raw")) -> None:

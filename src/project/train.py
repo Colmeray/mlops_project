@@ -77,9 +77,9 @@ def train():
         activities=[ProfilerActivity.CPU],  # <- kun CPU på M2
         schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
         on_trace_ready=torch.profiler.tensorboard_trace_handler("./profiler_logs"),
-        record_shapes=False,
-        profile_memory=False,
-        with_stack=False,
+        record_shapes=True,
+        profile_memory=True,
+        with_stack=True,
     ) as prof:
 
     # with profile(
@@ -128,7 +128,7 @@ def train():
                 correct += (pred == y).sum().item()
                 total += y.size(0)
 
-                print(f"{epoch} : {loss.item()}")
+                print(f"{epoch} : {loss.item()} , ")
 
                 # ---- MEGET VIGTIGT: STEP PROFILEREN HVER BATCH ----
                 prof.step()
