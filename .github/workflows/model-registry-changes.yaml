@@ -27,19 +27,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
       - name: Install uv
         uses: astral-sh/setup-uv@v4
         with:
+          uv-version: "0.4.25"
           enable-cache: true
-
-      - name: Set up Python
-        run: uv python install 3.13
 
       - name: Sync dependencies
         run: uv sync --frozen
 
-      # Here you choose what a "registry check" means for your project:
-      # e.g., run unit tests, validate that model files exist, or run a small smoke test script
       - name: Run tests (smoke check for model changes)
-        run: |
-          uv run -m pytest -q
+        run: uv run pytest -q
+
