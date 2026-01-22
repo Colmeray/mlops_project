@@ -28,11 +28,8 @@ def get_device() -> torch.device:
 
 
 def train_impl(cfg, max_batches: int | None = None):
-    # disable wandb early in smoke tests / CI tests
-    if cfg.get("smoke_test", False):
-        cfg.wandb.enable = False
-
-    if cfg.wandb.enable:
+    use_wandb = bool(cfg.get("wandb", {}).get("enable", False)) and not bool(cfg.get("smoke_test", False))
+    if use_wandb:
         wandb.init(
             project="mlops_project",
             config=OmegaConf.to_container(cfg, resolve=True),
@@ -196,7 +193,7 @@ def train_impl(cfg, max_batches: int | None = None):
             val_loss /= val_total
             val_acc = val_correct / val_total
 
-            if cfg.get("wandb", {}).get("enable", False) and not cfg.get("smoke_test", False):
+            
             if cfg.wandb.enable:
                 wandb.log({
                     "epoch": epoch,
@@ -219,6 +216,7 @@ def train_impl(cfg, max_batches: int | None = None):
             else:
                 logger.info(f"estimated time to finish: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
             
+            if use_wandb:
                 wandb.log(
                     {
                         "epoch": epoch,
