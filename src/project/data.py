@@ -27,10 +27,9 @@ def ensure_dataset(data_dir: Path = Path("data/raw")) -> None:
         typer.echo("If you want to recreate it: rm -rf data/raw and rerun")
         return
 
-    #create symlink from cache to data folder
+    # create symlink from cache to data folder
     data_dir.symlink_to(cache_path, target_is_directory=True)
     typer.echo(f"Linked {data_dir} -> {cache_path}")
-
 
 
 @app.command("preprocess")
@@ -54,7 +53,6 @@ def preprocess(
     index_dir = out_root / "index"
     meta_dir.mkdir(parents=True, exist_ok=True)
     index_dir.mkdir(parents=True, exist_ok=True)
-
 
     # 1) classes = folder names
     classes = sorted([d.name for d in raw_root.iterdir() if d.is_dir()])
@@ -97,7 +95,6 @@ def preprocess(
     (index_dir / "all.csv").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"Saved mapping: {meta_dir / 'classes.json'}")
     print(f"Saved index:   {index_dir / 'all.csv'}  ({n} images)")
-
 
 
 IMG_EXTS = {".jpg", ".jpeg", ".png", ".webp"}
@@ -145,9 +142,7 @@ class MyDataset(Dataset):
                 self.samples.append((p, label))
 
         if not self.samples:
-            raise ValueError(
-                f"No valid images found. Checked CSV: {index_path} with raw_root={self.raw_root}"
-            )
+            raise ValueError(f"No valid images found. Checked CSV: {index_path} with raw_root={self.raw_root}")
 
         # handy for train.py
         self.num_classes = len(self.classes)

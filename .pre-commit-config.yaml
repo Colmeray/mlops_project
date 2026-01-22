@@ -1,5 +1,12 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+exclude: |
+  ^wandb/|
+  ^profiler_logs/|
+  ^\.kagglehub_cache/|
+  ^outputs/
+  ^uv.lock/
+
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
@@ -16,15 +23,13 @@ repos:
     -   id: ruff-format      # formatter (som black)
     -   id: ruff             # linter
 
-# ---- Basic Python sanity ----
--   repo: https://github.com/psf/black
-    rev: 23.9.1
-    hooks:
-    -   id: black
 
-# ---- Type checking (valgfrit men godt) ----
--   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.6.1
-    hooks:
-    -   id: mypy
-    files: src/
+# ---- Type checking ----
+- repo: local
+  hooks:
+    - id: mypy
+      name: mypy (via uv)
+      entry: uv run mypy --explicit-package-bases --config-file pyproject.toml
+      language: system
+      types: [python]
+      files: ^(src)/.*\.py$

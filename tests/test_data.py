@@ -25,7 +25,6 @@ def test_preprocess(tmp_path: Path):
     assert (out_root / "meta" / "classes.json").exists()
     assert (out_root / "index" / "all.csv").exists()
 
-
     # assert wether the content is created as expected in json file
     meta_path = out_root / "meta" / "classes.json"
     meta = json.loads(meta_path.read_text())
@@ -39,10 +38,12 @@ def test_preprocess(tmp_path: Path):
     assert len(lines) >= 3
 
     # Test wether
-    transform = transforms.Compose([
-        transforms.Resize((64, 64)),
-        transforms.ToTensor(),
-    ])
+    transform = transforms.Compose(
+        [
+            transforms.Resize((64, 64)),
+            transforms.ToTensor(),
+        ]
+    )
 
     ds = MyDataset(processed_root=out_root, raw_root=raw_root, transform=transform)
 
@@ -53,10 +54,3 @@ def test_preprocess(tmp_path: Path):
     assert x.shape == (3, 64, 64)
     assert y.dtype == torch.long
     assert 0 <= int(y.item()) < ds.num_classes
-
-
-
-
-
-
-

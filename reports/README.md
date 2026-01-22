@@ -62,15 +62,15 @@ will check the repositories and the code to verify your answers.
     `pyproject.toml`/`uv.lock` up-to-date with whatever dependencies that you are using (M2+M6)
 * [x] Remember to comply with good coding practices (`pep8`) while doing the project (M7)
 * [x] Do a bit of code typing and remember to document essential parts of your code (M7)
-* [ ] Setup version control for your data or part of your data (M8)
-* [ ] Add command line interfaces and project commands to your code where it makes sense (M9)
-* [ ] Construct one or multiple docker files for your code (M10)
-* [ ] Build the docker files locally and make sure they work as intended (M10)
-* [ ] Write one or multiple configurations files for your experiments (M11)
+* [x] Setup version control for your data or part of your data (M8)
+* [x] Add command line interfaces and project commands to your code where it makes sense (M9)
+* [x] Construct one or multiple docker files for your code (M10)
+* [x] Build the docker files locally and make sure they work as intended (M10)
+* [x] Write one or multiple configurations files for your experiments (M11)
 * [x] Used Hydra to load the configurations and manage your hyperparameters (M11)
 * [x] Use profiling to optimize your code (M12)
-* [ ] Use logging to log important events in your code (M14)
-* [ ] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
+* [x] Use logging to log important events in your code (M14)
+* [x] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
 * [ ] Consider running a hyperparameter optimization sweep (M14)
 * [ ] Use PyTorch-lightning (if applicable) to reduce the amount of boilerplate in your code (M15)
 
@@ -85,7 +85,7 @@ will check the repositories and the code to verify your answers.
 * [x] Add pre-commit hooks to your version control setup (M18)
 * [x] Add a continues workflow that triggers when data changes (M19)
 * [x] Add a continues workflow that triggers when changes to the model registry is made (M19)
-* [ ] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
+* [x] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
 * [ ] Create a trigger workflow for automatically building your docker images (M21)
 * [ ] Get your model training in GCP using either the Engine or Vertex AI (M21)
 * [ ] Create a FastAPI application that can do inference using your model (M22)
@@ -345,7 +345,12 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 >
 > Answer:
 
---- question 12 fill here ---
+We configured our experiments using hydra config files which made it easy to manage hyperparameters and run reproducible runs without hardcoding values in train.py or such. The default settings live in configs/config.yaml and are passed into the training script as a cfg object. For new experiments, we simply override parameters from the CLI for example:
+
+"python -m project.train model.name=vgg16 lr=3e-4 batch_size=64 wandb.enable=false"
+
+This lets us quickly change batch size, learning rate, model choice and toggle Weights & Biases logging while keeping the training code clean and consistent.
+
 
 ### Question 13
 
@@ -360,7 +365,7 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 >
 > Answer:
 
---- question 13 fill here ---
+We ensured reproducibility by combining Hydra configs fixed random seeds and same environments. Each run loads a default config.yaml and any CLI overrides are applied explicitly, so the exact hyperparameters are always known. Hydra also saves the full resolved config for every run in the output folder, making it easy to rerun the same setup later. We set a global seed (for Python/NumPy/PyTorch) to make data splits and training as deterministic as possible. In addition, we used Weights & Biases to log the final config, metrics, and artifacts (e.g., model checkpoints), so results are traceable. Finally, we relied on locked dependencies (uv.lock) and Docker to keep the software environment consistent across machines.
 
 ### Question 14
 
@@ -392,7 +397,19 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 >
 > Answer:
 
---- question 15 fill here ---
+We used Docker to create a reproducible environment for training our machine learning models. Instead of relying on local Python installations and system-specific dependencies, we packaged the entire project, including the code, configuration files, and all dependencies, into a Docker image. This ensured that our experiments could be run consistently on different machines.
+
+Our main Docker image is a training container. When the container starts, it automatically downloads the dataset using KaggleHub, preprocesses the images, and runs the training script. This allowed us to validate that the full pipeline works from a clean state.
+
+To build the image, we run:
+"docker build -t mlops-train -f dockerfiles/train.dockerfile ."
+
+To run the container:
+"docker run --rm -v $(pwd)/data:/app/data mlops-train"
+
+This mounts the local data directory so that preprocessing results can be reused.
+
+Link to Dockerfile: dockerfiles/train.dockerfile
 
 ### Question 16
 
@@ -407,7 +424,11 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 >
 > Answer:
 
---- question 16 fill here ---
+When we encountered bugs during development, we mainly used a combination of print statements and running the code in small steps to identify where errors occurred. We also relied on pytest tests and pre-commit hooks (Ruff, Black, and mypy) to catch syntax errors, formatting problems, and simple logic mistakes early. When dependency or environment issues occurred, we reproduced the problem inside our Docker container to ensure that the error was not caused by local setup differences.
+
+We also experimented with profiling using PyTorch’s built-in profiler. By running a short profiling session during training, we could inspect which parts of the training loop were most expensive. This helped us verify that the forward pass and backpropagation dominated runtime, which is expected for deep learning models.
+
+We do not consider the code perfect, but the combination of debugging, testing, and profiling helped us improve stability and performance.
 
 ## Working in the cloud
 
@@ -450,6 +471,9 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 
 --- question 19 fill here ---
 
+![buckets overview from one user](reports/figures/buckets_jo.png)
+
+
 ### Question 20
 
 > **Upload 1-2 images of your GCP artifact registry, such that we can see the different docker images that you have**
@@ -481,7 +505,7 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 >
 > Answer:
 
---- question 22 fill here ---
+We managed to train it in cloud engine but only partially as we had some problems with getting the updates to weights and biases
 
 ## Deployment
 
@@ -498,7 +522,13 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 >
 > Answer:
 
---- question 23 fill here ---
+We did not implement a production API for our model as part of this project. However, if we were to deploy the model as a service, we would expose it through a simple FastAPI application.
+
+The API would load the trained model at startup and provide an endpoint for example, "/predict" that accepts an image file or JSON input. The input would be preprocessed in the same way as during training, and the model would return a predicted class label and confidence score.
+
+To make the API more robust, we would add input validation, error handling, and request logging. We would also include a health-check endpoint such as "/health" so that monitoring tools could verify that the service is running. Finally, we would containerize the API using Docker so it could be deployed consistently on any platform or cloud environment.
+
+This approach would allow the model to be used by other systems in a simple and scalable way.
 
 ### Question 24
 
@@ -514,7 +544,11 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 >
 > Answer:
 
---- question 24 fill here ---
+We did not deploy an API for this project. The main reason is that the focus of the project was on building and validating a reproducible machine learning pipeline, including data preprocessing, model training, testing, and continuous integration, rather than on serving the model as a web service.
+
+Deploying the model as an API would require building and maintaining a separate service layer, handling user requests, and ensuring that the model runs reliably in a production setting. This was part of the assignment, but we did not manage to complete this step within the project.
+
+However, the way our project is structured means that an API and deployment could be added later without major changes to the code. The model training and inference logic are separated from the rest of the system, which makes it easier to extend the project with a deployment step in the future.
 
 ### Question 25
 
@@ -529,7 +563,13 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 >
 > Answer:
 
---- question 25 fill here ---
+We did not perform unit testing or load testing of an API, because we did not finish implementing the API for our model. However, if the API had been completed, we would have tested it using the same approach described in the course.
+
+For functionality testing, we would use FastAPI’s TestClient together with pytest to simulate API calls and verify that the endpoints return the correct status codes and responses for different inputs. These tests would be placed in a separate integrationtests folder to clearly differentiate them from normal unit tests.
+
+For load testing, we would use the Locust framework to simulate many users sending requests to the API at the same time. This would allow us to measure response time and throughput, and observe how the API behaves under increasing load. Running Locust in headless mode would also make it possible to integrate these tests.
+
+Even though we did not implement this step, the project could easily be extended with API and performance testing using this setup.
 
 ### Question 26
 
@@ -544,7 +584,11 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 >
 > Answer:
 
---- question 26 fill here ---
+We did not implement monitoring of a deployed model, because the model was not exposed as a running service. However, monitoring would be an important part of a real production system and would help ensure that the model continues to perform well over time.
+
+With monitoring in place, we could track metrics such as prediction frequency, response time, and error rates to detect performance issues early. We could also monitor changes in the input data distribution and compare them with the training data to detect data drift. If the model’s predictions or confidence scores started to change significantly, this could indicate that the model is no longer well suited to new data.
+
+Monitoring would therefore help maintain the reliability and accuracy of the system, and allow us to retrain or update the model when necessary, making sure of the long-term stability of the application.
 
 ## Overall discussion of project
 
@@ -610,7 +654,7 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 >
 > Answer:
 
---- question 30 fill here ---
+
 
 ### Question 31
 

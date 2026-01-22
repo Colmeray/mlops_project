@@ -6,7 +6,7 @@
 import re
 from pathlib import Path
 
-import markdown
+import markdown  # type: ignore[import-untyped]
 import pydantic
 import typer
 from loguru import logger
