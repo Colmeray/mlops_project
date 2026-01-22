@@ -397,7 +397,19 @@ We ensured reproducibility by combining Hydra configs fixed random seeds and sam
 >
 > Answer:
 
---- question 15 fill here ---
+We used Docker to create a reproducible environment for training our machine learning models. Instead of relying on local Python installations and system-specific dependencies, we packaged the entire project, including the code, configuration files, and all dependencies, into a Docker image. This ensured that our experiments could be run consistently on different machines.
+
+Our main Docker image is a training container. When the container starts, it automatically downloads the dataset using KaggleHub, preprocesses the images, and runs the training script. This allowed us to validate that the full pipeline works from a clean state.
+
+To build the image, we run:
+"docker build -t mlops-train -f dockerfiles/train.dockerfile ."
+
+To run the container:
+"docker run --rm -v $(pwd)/data:/app/data mlops-train"
+
+This mounts the local data directory so that preprocessing results can be reused.
+
+Link to Dockerfile: dockerfiles/train.dockerfile
 
 ### Question 16
 
@@ -412,7 +424,11 @@ We ensured reproducibility by combining Hydra configs fixed random seeds and sam
 >
 > Answer:
 
---- question 16 fill here ---
+When we encountered bugs during development, we mainly used a combination of print statements and running the code in small steps to identify where errors occurred. We also relied on pytest tests and pre-commit hooks (Ruff, Black, and mypy) to catch syntax errors, formatting problems, and simple logic mistakes early. When dependency or environment issues occurred, we reproduced the problem inside our Docker container to ensure that the error was not caused by local setup differences.
+
+We also experimented with profiling using PyTorch’s built-in profiler. By running a short profiling session during training, we could inspect which parts of the training loop were most expensive. This helped us verify that the forward pass and backpropagation dominated runtime, which is expected for deep learning models.
+
+We do not consider the code perfect, but the combination of debugging, testing, and profiling helped us improve stability and performance.
 
 ## Working in the cloud
 

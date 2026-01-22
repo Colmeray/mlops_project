@@ -19,9 +19,7 @@ def ensure_dataset(data_dir: Path = Path("data/raw")) -> None:
     """
     data_dir = data_dir.resolve()
     data_dir.parent.mkdir(parents=True, exist_ok=True)
-    cache_path = Path(
-        kagglehub.dataset_download("kacpergregorowicz/house-plant-species")
-    ).resolve()
+    cache_path = Path(kagglehub.dataset_download("kacpergregorowicz/house-plant-species")).resolve()
 
     # check if data is already downloaded
     if data_dir.exists() or data_dir.is_symlink():
@@ -36,9 +34,7 @@ def ensure_dataset(data_dir: Path = Path("data/raw")) -> None:
 
 @app.command("preprocess")
 def preprocess(
-    raw_root: Path = typer.Option(
-        ..., "--raw-root", exists=True, file_okay=False, dir_okay=True
-    ),
+    raw_root: Path = typer.Option(..., "--raw-root", exists=True, file_okay=False, dir_okay=True),
     out_root: Path = typer.Option(..., "--out-root", file_okay=False, dir_okay=True),
 ) -> None:
     """
@@ -94,9 +90,7 @@ def preprocess(
                 n += 1
 
     if n == 0:
-        raise ValueError(
-            f"No images found under {raw_root} with extensions {sorted(IMG_EXTS)}"
-        )
+        raise ValueError(f"No images found under {raw_root} with extensions {sorted(IMG_EXTS)}")
 
     (index_dir / "all.csv").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"Saved mapping: {meta_dir / 'classes.json'}")
@@ -148,9 +142,7 @@ class MyDataset(Dataset):
                 self.samples.append((p, label))
 
         if not self.samples:
-            raise ValueError(
-                f"No valid images found. Checked CSV: {index_path} with raw_root={self.raw_root}"
-            )
+            raise ValueError(f"No valid images found. Checked CSV: {index_path} with raw_root={self.raw_root}")
 
         # handy for train.py
         self.num_classes = len(self.classes)
