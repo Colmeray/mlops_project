@@ -37,12 +37,14 @@ def train_impl(cfg, max_batches: int | None = None):
             transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
         ]
     )
-    processed_root = Path("data/preprocessed")
+    # Allow overriding paths (useful for tests/CI); keep defaults for normal runs.
+    processed_root = Path(cfg.get("processed_root", "data/preprocessed"))
 
-    # KaggleHub symlinker typisk data/raw -> .../versions/4
-    # og selve billederne ligger i house_plant_species/
-    candidate = Path("data/raw/house_plant_species")
-    raw_root = candidate if candidate.exists() else Path("data/raw")
+    raw_root_cfg = Path(cfg.get("raw_root", "data/raw"))
+
+    # Keep your KaggleHub folder fallback, but only relative to the chosen raw_root
+    candidate = raw_root_cfg / "house_plant_species"
+    raw_root = candidate if candidate.exists() else raw_root_cfg
 
     print("processed_root =", processed_root, flush=True)
     print("raw_root       =", raw_root, flush=True)
@@ -55,8 +57,11 @@ def train_impl(cfg, max_batches: int | None = None):
 
     # split
     n = len(dataset)
-    n_val = int(0.1 * n)
+    val_frac = float(cfg.get("val_frac", 0.1))
+    n_val = max(1, int(val_frac * n)) if n >= 2 else 0
     n_train = n - n_val
+    if n_val == 0:
+        n_train = n
     idx_train, idx_val = random_split(
         range(n),
         [n_train, n_val],
