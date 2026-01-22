@@ -42,4 +42,4 @@ jobs:
       - name: Ensure dataset + preprocess
         run: |
           uv run -m project.data ensure-dataset
-          uv run -m project.data preprocess data/raw data/preprocessed
+          uv run -m project.data preprocess data/raw data/processed
