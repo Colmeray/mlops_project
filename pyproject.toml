@@ -38,7 +38,7 @@ dependencies = [
 [dependency-groups]
 dev = [
   "coverage==7.6.9",
-  "invoke==2.2",
+  "invoke==2.2.1",
   "mkdocs==1.6.1",
   "mkdocs-material==9.4.6",
   "mkdocstrings-python==1.12.2",
