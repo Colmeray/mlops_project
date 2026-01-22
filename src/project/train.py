@@ -18,7 +18,7 @@ from torch.profiler import profile, ProfilerActivity, record_function
 
 def get_device() -> torch.device:
     if torch.cuda.is_available():
-        print("cuda virker!!" , Flush = True)
+        print("cuda virker!!" , flush = True)
         return torch.device("cuda")
     if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
         print("Sindssyg mac M-chip aktiveret!" , flush= True)
@@ -153,7 +153,7 @@ def train_impl(cfg, max_batches: int | None = None):
                 total += y.size(0)
                 if batch_idx % 10 == 0:
                     logger.info(f"epoch: {epoch} , batch:{batch_idx}/{len(train_loader)}")
-                    logger.info(f"total time in epoch: {time.perf_counter - tid_start}")
+                    logger.info(f"total time in epoch: {time.perf_counter() - tid_start}")
                 # print(f"{epoch} : {loss.item()}", flush=True)
 
 
@@ -195,15 +195,30 @@ def train_impl(cfg, max_batches: int | None = None):
                     "val_acc": val_acc,
                     "lr": cfg.lr,
                 })
+            
+            logger.info(f"Epoch {epoch:02d} | ")
+            logger.info(f"train loss {train_loss:.4f} acc {train_acc:.3f} | ")
+            logger.info(f"val loss {val_loss:.4f} acc {val_acc:.3f}")
 
-            print(
-                f"Epoch {epoch:02d} | "
-                f"train loss {train_loss:.4f} acc {train_acc:.3f} | "
-                f"val loss {val_loss:.4f} acc {val_acc:.3f}"
-            )
+            # i know i should have defined a varible: but it's too late now :D
+            if (time.perf_counter() - tid_start)*(epochs - epoch +1) > 60*60*24:
+                logger.critical(f"estimated time is: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
+            elif (time.perf_counter() - tid_start)*(epochs - epoch +1) > 60*60*4:
+                logger.warning(f"estimated time is: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
+            else:
+                logger.info(f"estimated time is: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
+            
+
+            
+            # print(
+            #     f"Epoch {epoch:02d} | "
+            #     f"train loss {train_loss:.4f} acc {train_acc:.3f} | "
+            #     f"val loss {val_loss:.4f} acc {val_acc:.3f}"
+            # )
 
     if cfg.wandb.enable:
         wandb.finish()
+    logger.complete()
     return {"train_loss": train_loss, "train_acc": train_acc}
 
 
