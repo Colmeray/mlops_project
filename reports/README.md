@@ -345,7 +345,12 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 >
 > Answer:
 
---- question 12 fill here ---
+We configured our experiments using hydra config files which made it easy to manage hyperparameters and run reproducible runs without hardcoding values in train.py or such. The default settings live in configs/config.yaml and are passed into the training script as a cfg object. For new experiments, we simply override parameters from the CLI for example:
+
+"python -m project.train model.name=vgg16 lr=3e-4 batch_size=64 wandb.enable=false"
+
+This lets us quickly change batch size, learning rate, model choice and toggle Weights & Biases logging while keeping the training code clean and consistent.
+
 
 ### Question 13
 
@@ -360,7 +365,7 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 >
 > Answer:
 
---- question 13 fill here ---
+We ensured reproducibility by combining Hydra configs fixed random seeds and same environments. Each run loads a default config.yaml and any CLI overrides are applied explicitly, so the exact hyperparameters are always known. Hydra also saves the full resolved config for every run in the output folder, making it easy to rerun the same setup later. We set a global seed (for Python/NumPy/PyTorch) to make data splits and training as deterministic as possible. In addition, we used Weights & Biases to log the final config, metrics, and artifacts (e.g., model checkpoints), so results are traceable. Finally, we relied on locked dependencies (uv.lock) and Docker to keep the software environment consistent across machines.
 
 ### Question 14
 
@@ -449,6 +454,9 @@ Example workflow: https://github.com/Colmeray/mlops_project/actions/workflows/te
 > Answer:
 
 --- question 19 fill here ---
+
+![buckets overview from one user](reports/figures/buckets_jo.png)
+
 
 ### Question 20
 
