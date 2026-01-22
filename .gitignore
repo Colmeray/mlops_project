@@ -182,3 +182,13 @@ cython_debug/
 
 # ADDED AF OLIVER (test)
 uv.lock
+
+wandb/
+
+profiler_logs/
+
+.kagglehub_cache/
+
+outputs/
+
+*.pt.trace.json
