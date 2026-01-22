@@ -180,7 +180,7 @@ class MyDataset(Dataset):
             raise ValueError(
                 f"No valid images found. Checked CSV: {index_path} with raw_root={self.raw_root}"
             )
-
+    
         self.num_classes = len(self.classes)
 
     def __len__(self) -> int:
