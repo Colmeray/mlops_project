@@ -23,6 +23,7 @@ def get_device() -> torch.device:
     if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
         print("Sindssyg mac M-chip aktiveret!" , flush= True)
         return torch.device("mps")
+    logger.critical("Warning CPU is being used 🤡🤡🤡🤡🤡🤡")
     return torch.device("cpu")
 
 
@@ -152,7 +153,7 @@ def train_impl(cfg, max_batches: int | None = None):
                 correct += (pred == y).sum().item()
                 total += y.size(0)
                 if batch_idx % 10 == 0:
-                    logger.info(f"epoch: {epoch} , batch:{batch_idx}/{len(train_loader)}")
+                    logger.info(f"epoch: {epoch}  batch id completed:{batch_idx}/{len(train_loader)} Loss: {loss.item()}")
                     logger.info(f"total time in epoch: {time.perf_counter() - tid_start}")
                 # print(f"{epoch} : {loss.item()}", flush=True)
 
@@ -202,11 +203,11 @@ def train_impl(cfg, max_batches: int | None = None):
 
             # i know i should have defined a varible: but it's too late now :D
             if (time.perf_counter() - tid_start)*(epochs - epoch +1) > 60*60*24:
-                logger.critical(f"estimated time is: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
+                logger.critical(f"estimated time to finish: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
             elif (time.perf_counter() - tid_start)*(epochs - epoch +1) > 60*60*4:
-                logger.warning(f"estimated time is: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
+                logger.warning(f"estimated time to finish: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
             else:
-                logger.info(f"estimated time is: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
+                logger.info(f"estimated time to finish: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
             
 
             
