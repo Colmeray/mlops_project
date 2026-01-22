@@ -7,6 +7,9 @@ from PIL import Image
 import torch
 from typing import Optional, Callable, Any
 import csv
+import os
+import shutil
+import subprocess
 
 
 app = typer.Typer()
@@ -15,21 +18,59 @@ app = typer.Typer()
 @app.command("ensure-dataset")
 def ensure_dataset(data_dir: Path = Path("data/raw")) -> None:
     """
-    Download dataset via kagglehub and expose it at data/raw via symlink
+    Ensure dataset exists at data/raw.
+
+    Priority:
+      1) If data/raw already exists and is non-empty -> do nothing
+      2) If DATA_GCS_URI is set -> download from GCS into data/raw
+      3) Else -> download via kagglehub and symlink data/raw to the cache
     """
     data_dir = data_dir.resolve()
     data_dir.parent.mkdir(parents=True, exist_ok=True)
-    cache_path = Path(kagglehub.dataset_download("kacpergregorowicz/house-plant-species")).resolve()
 
-    # check if data is already downloaded
-    if data_dir.exists() or data_dir.is_symlink():
-        typer.echo(f"{data_dir} already exists -> {data_dir}")
-        typer.echo("If you want to recreate it: rm -rf data/raw and rerun")
+    # if already present and nonempty, keep it
+    if data_dir.exists():
+        if data_dir.is_dir() and any(data_dir.iterdir()):
+            typer.echo(f"Dataset already present at {data_dir}")
+            return
+        # if it's empty dir or symlink, we'll recreate below
+        if data_dir.is_symlink():
+            data_dir.unlink()
+        elif data_dir.is_dir():
+            shutil.rmtree(data_dir)
+        else:
+            data_dir.unlink()
+
+    # Try getting dataset from cloud
+    gcs_uri = os.getenv("DATA_GCS_URI")
+    if gcs_uri:
+        typer.echo(f"Downloading dataset from GCS: {gcs_uri} -> {data_dir}")
+        data_dir.mkdir(parents=True, exist_ok=True)
+
+        if shutil.which("gcloud"):
+            cmd = ["gcloud", "storage", "rsync", "-r", gcs_uri, str(data_dir)]
+        elif shutil.which("gsutil"):
+            cmd = ["gsutil", "-m", "rsync", "-r", gcs_uri, str(data_dir)]
+        else:
+            raise RuntimeError(
+                "DATA_GCS_URI is set, but neither 'gcloud' nor 'gsutil' is available in this environment."
+            )
+
+        subprocess.run(cmd, check=True)
+        typer.echo("Done downloading from GCS.")
         return
 
-    #create symlink from cache to data folder
+    # get it from kaggle if not possible
+    typer.echo("DATA_GCS_URI not set. Falling back to kagglehub download...")
+    cache_path = Path(
+        kagglehub.dataset_download("kacpergregorowicz/house-plant-species")
+    ).resolve()
+
     data_dir.symlink_to(cache_path, target_is_directory=True)
     typer.echo(f"Linked {data_dir} -> {cache_path}")
+
+
+
 
 
 
@@ -136,8 +177,6 @@ class MyDataset(Dataset):
                 if p.suffix.lower() not in IMG_EXTS:
                     continue
                 if not p.exists():
-                    # If you want strictness, raise instead:
-                    # raise FileNotFoundError(f"Image listed in CSV not found: {p}")
                     continue
 
                 self.samples.append((p, label))
@@ -147,7 +186,6 @@ class MyDataset(Dataset):
                 f"No valid images found. Checked CSV: {index_path} with raw_root={self.raw_root}"
             )
 
-        # handy for train.py
         self.num_classes = len(self.classes)
 
     def __len__(self) -> int:

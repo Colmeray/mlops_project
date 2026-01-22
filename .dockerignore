@@ -1,0 +1,14 @@
+.venv/
+.git/
+__MACOSX/
+*.DS_Store
+
+data/
+mlops_data/
+outputs/
+mlops_outputs/
+profiler_logs/
+wandb/
+htmlcov/
+.pytest_cache/
+.coverage

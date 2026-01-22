@@ -10,6 +10,7 @@ from project.model import VGG16Transfer
 import wandb
 from omegaconf import OmegaConf
 
+
 # ---- NEW IMPORTS TO PROFILER ---- #
 from torch.profiler import profile, ProfilerActivity, record_function
 
@@ -24,11 +25,13 @@ def get_device() -> torch.device:
     return torch.device("cpu")
 
 
+
 def train_impl(cfg, max_batches: int | None = None):
     if cfg.wandb.enable:
         wandb.init(
-            project="mlops_project",
+            project=cfg.wandb.project,
             config=OmegaConf.to_container(cfg, resolve=True),
+            entity=cfg.wandb.entity,
         )
     transform = transforms.Compose([
     transforms.Resize((224, 224)),   # pick size your model expects
@@ -36,8 +39,8 @@ def train_impl(cfg, max_batches: int | None = None):
     transforms.Normalize(mean=(0.485, 0.456, 0.406),
                      std=(0.229, 0.224, 0.225))
     ])      
-    processed_root = Path("data/preprocessed")
-    raw_root = Path("data/raw/house_plant_species")
+    processed_root = cfg.data.processed_root
+    raw_root = cfg.data.raw_root
 
     dataset = MyDataset(processed_root=processed_root, raw_root=raw_root,transform=transform)  
     num_classes = dataset.num_classes 

@@ -1,0 +1,25 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    id: "Build"
+    args:
+      [
+        "build",
+        "-f",
+        "dockerfiles/train.dockerfile",
+        "-t",
+        "europe-west1-docker.pkg.dev/$PROJECT_ID/mlopsplantproject/train:$BUILD_ID",
+        "-t",
+        "europe-west1-docker.pkg.dev/$PROJECT_ID/mlopsplantproject/train:latest",
+        "."
+      ]
+
+  - name: "gcr.io/cloud-builders/docker"
+    id: "Push (build_id)"
+    args: ["push", "europe-west1-docker.pkg.dev/$PROJECT_ID/mlopsplantproject/train:$BUILD_ID"]
+
+  - name: "gcr.io/cloud-builders/docker"
+    id: "Push (latest)"
+    args: ["push", "europe-west1-docker.pkg.dev/$PROJECT_ID/mlopsplantproject/train:latest"]
+
+options:
+  logging: CLOUD_LOGGING_ONLY

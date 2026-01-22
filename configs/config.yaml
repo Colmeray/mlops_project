@@ -3,10 +3,19 @@ val_frac: 0.1
 epochs: 5
 batch_size: 32
 lr: 1e-4
+
+data:
+  raw_root: ${oc.env:RAW_ROOT,/app/data/raw}
+  processed_root: ${oc.env:OUT_ROOT,/app/data/processed}
+  gcs_uri: ${oc.env:DATA_GCS_URI,""}
+
 model:
-  name: simple   # or vgg16
+  name: simple  # or vgg16
   freeze_features: true
+
 wandb:
   enable: true
+  project: mlops_project
+  entity: ${oc.env:WANDB_ENTITY,""}   # optional
 
 smoke_test: false
