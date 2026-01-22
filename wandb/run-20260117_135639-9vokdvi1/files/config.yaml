@@ -2,7 +2,7 @@ _wandb:
     value:
         cli_version: 0.24.0
         e:
-            cqy55iy27qxorl6boxpdjn34ckq2re7l:
+            cqy55it27qxorl6boxpdjn34ckq2re7l:
                 apple:
                     ecpuCores: 4
                     gpuCores: 8
@@ -35,7 +35,7 @@ _wandb:
                 python: CPython 3.13.7
                 root: /Users/jonathan/Desktop/MLOPS/mlops_project
                 startedAt: "2026-01-17T12:56:39.785792Z"
-                writerId: cqy55iy27qxorl6boxpdjn34ckq2re7l
+                writerId: cqy55it27qxorl6boxpdjn34ckq2re7l
         m: []
         python_version: 3.13.7
         t:
