@@ -37,7 +37,14 @@ def train_impl(cfg, max_batches: int | None = None):
                      std=(0.229, 0.224, 0.225))
     ])      
     processed_root = Path("data/preprocessed")
-    raw_root = Path("data/raw/house_plant_species")
+
+    # KaggleHub symlinker typisk data/raw -> .../versions/4
+    # og selve billederne ligger i house_plant_species/
+    candidate = Path("data/raw/house_plant_species")
+    raw_root = candidate if candidate.exists() else Path("data/raw")
+
+    print("processed_root =", processed_root, flush=True)
+    print("raw_root       =", raw_root, flush=True)
 
     dataset = MyDataset(processed_root=processed_root, raw_root=raw_root,transform=transform)  
     num_classes = dataset.num_classes 
@@ -80,7 +87,7 @@ def train_impl(cfg, max_batches: int | None = None):
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.Adam(params, lr=cfg.lr)
 
-    print("training starting")
+    print("training starting", flush=True)
     epochs = cfg.epochs
 
     # ================== TORCH PROFILER ==================
@@ -112,7 +119,7 @@ def train_impl(cfg, max_batches: int | None = None):
         # ================================================
 
         for epoch in range(1, epochs + 1):
-            print(f"epoch {epoch} is running:\n")
+            print(f"epoch {epoch} is running:\n", flush=True)
             model.train()
             
             train_loss = 0.0
@@ -142,7 +149,8 @@ def train_impl(cfg, max_batches: int | None = None):
                 correct += (pred == y).sum().item()
                 total += y.size(0)
 
-                print(f"{epoch} : {loss.item()}")
+                print(f"{epoch} : {loss.item()}", flush=True)
+
 
                 # ---- MEGET VIGTIGT: STEP PROFILEREN HVER BATCH ----
                 prof.step()
@@ -169,23 +177,25 @@ def train_impl(cfg, max_batches: int | None = None):
                     val_correct += (pred == y).sum().item()
                     val_total += y.size(0)
 
-        val_loss /= val_total
-        val_acc = val_correct / val_total
-        if cfg.wandb.enable:
-            wandb.log({
-                "epoch": epoch,
-                "train_loss": train_loss,
-                "train_acc": train_acc,
-                "val_loss": val_loss,
-                "val_acc": val_acc,
-                "lr": cfg.lr,
+            val_loss /= val_total
+            val_acc = val_correct / val_total
+
+            if cfg.wandb.enable:
+                wandb.log({
+                    "epoch": epoch,
+                    "train_loss": train_loss,
+                    "train_acc": train_acc,
+                    "val_loss": val_loss,
+                    "val_acc": val_acc,
+                    "lr": cfg.lr,
                 })
 
-        print(
-            f"Epoch {epoch:02d} | "
-            f"train loss {train_loss:.4f} acc {train_acc:.3f} | "
-            f"val loss {val_loss:.4f} acc {val_acc:.3f}"
-        )
+            print(
+                f"Epoch {epoch:02d} | "
+                f"train loss {train_loss:.4f} acc {train_acc:.3f} | "
+                f"val loss {val_loss:.4f} acc {val_acc:.3f}"
+            )
+
     if cfg.wandb.enable:
         wandb.finish()
     return {"train_loss": train_loss, "train_acc": train_acc}
