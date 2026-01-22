@@ -189,7 +189,7 @@ def train_impl(cfg, max_batches: int | None = None):
             val_loss /= val_total
             val_acc = val_correct / val_total
 
-            if cfg.wandb.enable:
+            if cfg.get("wandb", {}).get("enable", False) and not cfg.get("smoke_test", False):
                 wandb.log(
                     {
                         "epoch": epoch,
