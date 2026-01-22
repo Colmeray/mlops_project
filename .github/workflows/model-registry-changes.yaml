@@ -43,4 +43,3 @@ jobs:
 
       - name: Run tests (smoke check for model changes)
         run: uv run pytest -q
-
