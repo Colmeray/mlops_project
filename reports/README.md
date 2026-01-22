@@ -489,7 +489,7 @@ We ensured reproducibility by combining Hydra configs fixed random seeds and sam
 >
 > Answer:
 
---- question 22 fill here ---
+We managed to train it in cloud engine but only partially as we had some problems with getting the updates to weights and biases
 
 ## Deployment
 
@@ -638,7 +638,7 @@ Monitoring would therefore help maintain the reliability and accuracy of the sys
 >
 > Answer:
 
---- question 30 fill here ---
+
 
 ### Question 31
 
