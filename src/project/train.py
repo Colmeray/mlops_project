@@ -9,6 +9,8 @@ import hydra
 from project.model import VGG16Transfer
 import wandb
 from omegaconf import OmegaConf
+from loguru import logger
+import time
 
 # ---- NEW IMPORTS TO PROFILER ---- #
 from torch.profiler import profile, ProfilerActivity, record_function
@@ -16,11 +18,12 @@ from torch.profiler import profile, ProfilerActivity, record_function
 
 def get_device() -> torch.device:
     if torch.cuda.is_available():
-        print("cuda virker!!")
+        print("cuda virker!!" , flush = True)
         return torch.device("cuda")
     if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-        print("Sindssyg mac M-chip aktiveret!")
+        print("Sindssyg mac M-chip aktiveret!" , flush= True)
         return torch.device("mps")
+    logger.critical("Warning CPU is being used 🤡🤡🤡🤡🤡🤡")
     return torch.device("cpu")
 
 
@@ -119,6 +122,7 @@ def train_impl(cfg, max_batches: int | None = None):
         # ================================================
 
         for epoch in range(1, epochs + 1):
+            tid_start = time.perf_counter()
             print(f"epoch {epoch} is running:\n", flush=True)
             model.train()
 
@@ -148,11 +152,14 @@ def train_impl(cfg, max_batches: int | None = None):
                 pred = logits.argmax(dim=1)
                 correct += (pred == y).sum().item()
                 total += y.size(0)
-
-                print(f"{epoch} : {loss.item()}", flush=True)
+                if batch_idx % 10 == 0:
+                    logger.info(f"epoch: {epoch}  batch id completed:{batch_idx}/{len(train_loader)} Loss: {loss.item()}")
+                    logger.info(f"total time in epoch: {time.perf_counter() - tid_start}")
+                # print(f"{epoch} : {loss.item()}", flush=True)
 
                 # ---- MEGET VIGTIGT: STEP PROFILEREN HVER BATCH ----
                 prof.step()
+            
 
             train_loss /= total
             train_acc = correct / total
@@ -180,6 +187,27 @@ def train_impl(cfg, max_batches: int | None = None):
             val_acc = val_correct / val_total
 
             if cfg.wandb.enable:
+                wandb.log({
+                    "epoch": epoch,
+                    "train_loss": train_loss,
+                    "train_acc": train_acc,
+                    "val_loss": val_loss,
+                    "val_acc": val_acc,
+                    "lr": cfg.lr,
+                })
+            
+            logger.info(f"Epoch {epoch:02d} | ")
+            logger.info(f"train loss {train_loss:.4f} acc {train_acc:.3f} | ")
+            logger.info(f"val loss {val_loss:.4f} acc {val_acc:.3f}")
+
+            # i know i should have defined a varible: but it's too late now :D
+            if (time.perf_counter() - tid_start)*(epochs - epoch +1) > 60*60*24:
+                logger.critical(f"estimated time to finish: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
+            elif (time.perf_counter() - tid_start)*(epochs - epoch +1) > 60*60*4:
+                logger.warning(f"estimated time to finish: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
+            else:
+                logger.info(f"estimated time to finish: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
+            
                 wandb.log(
                     {
                         "epoch": epoch,
@@ -191,14 +219,16 @@ def train_impl(cfg, max_batches: int | None = None):
                     }
                 )
 
-            print(
-                f"Epoch {epoch:02d} | "
-                f"train loss {train_loss:.4f} acc {train_acc:.3f} | "
-                f"val loss {val_loss:.4f} acc {val_acc:.3f}"
-            )
+            
+            # print(
+            #     f"Epoch {epoch:02d} | "
+            #     f"train loss {train_loss:.4f} acc {train_acc:.3f} | "
+            #     f"val loss {val_loss:.4f} acc {val_acc:.3f}"
+            # )
 
     if cfg.wandb.enable:
         wandb.finish()
+    logger.complete()
     return {"train_loss": train_loss, "train_acc": train_acc}
 
 
