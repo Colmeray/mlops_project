@@ -3,7 +3,8 @@ import torch
 from torchvision import models
 
 ## FIXME: billeder skal preprocess til 224x224 før det virker
-#VGG16 bare midlertidigt, :
+# VGG16 bare midlertidigt, :
+
 
 class SimpleModel(nn.Module):
     def __init__(self, num_classes: int):
@@ -13,11 +14,9 @@ class SimpleModel(nn.Module):
             nn.Conv2d(3, 16, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2),  # 224 -> 112
-
             nn.Conv2d(16, 32, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2),  # 112 -> 56
-
             nn.Conv2d(32, 64, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2),  # 56 -> 28
@@ -36,7 +35,12 @@ class SimpleModel(nn.Module):
 
 
 class VGG16Transfer(nn.Module):
-    def __init__(self, num_classes: int, freeze_features: bool = True, weights=models.VGG16_Weights.DEFAULT):
+    def __init__(
+        self,
+        num_classes: int,
+        freeze_features: bool = True,
+        weights=models.VGG16_Weights.DEFAULT,
+    ):
         super().__init__()
         self.backbone = models.vgg16(weights=weights)
 
@@ -51,11 +55,7 @@ class VGG16Transfer(nn.Module):
         return self.backbone(x)
 
 
-
-
-
-
 if __name__ == "__main__":
-    model = SimpleModel()
-    x = torch.rand(1)
+    model = SimpleModel(num_classes=10)
+    x = torch.rand(1, 3, 224, 224)
     print(f"Output shape of model: {model(x).shape}")
