@@ -47,9 +47,7 @@ def train_impl(cfg, max_batches: int | None = None):
     print("processed_root =", processed_root, flush=True)
     print("raw_root       =", raw_root, flush=True)
 
-    dataset = MyDataset(
-        processed_root=processed_root, raw_root=raw_root, transform=transform
-    )
+    dataset = MyDataset(processed_root=processed_root, raw_root=raw_root, transform=transform)
     num_classes = dataset.num_classes
 
     if cfg.get("smoke_test", False):
@@ -84,9 +82,7 @@ def train_impl(cfg, max_batches: int | None = None):
     if cfg.model.name == "simple":
         model = SimpleModel(num_classes=num_classes).to(device)
     elif cfg.model.name == "vgg16":
-        model = VGG16Transfer(
-            num_classes=num_classes, freeze_features=cfg.model.freeze_features
-        ).to(device)
+        model = VGG16Transfer(num_classes=num_classes, freeze_features=cfg.model.freeze_features).to(device)
 
     loss_fn = nn.CrossEntropyLoss()
     params = [p for p in model.parameters() if p.requires_grad]

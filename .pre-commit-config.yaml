@@ -23,11 +23,6 @@ repos:
     -   id: ruff-format      # formatter (som black)
     -   id: ruff             # linter
 
-# ---- Basic Python sanity ----
--   repo: https://github.com/psf/black
-    rev: 23.9.1
-    hooks:
-    -   id: black
 
 # ---- Type checking ----
 - repo: local
