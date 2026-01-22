@@ -37,7 +37,7 @@ The directory structure of the project looks like this:
 │       └── index.md
 ├── models/                   # Trained models
 ├── notebooks/                # Jupyter notebooks
-├── outputs/                  
+├── outputs/
 ├── reports/                  # Reports
 │   └── figures/
 │   └── README.md/
@@ -63,7 +63,7 @@ The directory structure of the project looks like this:
 ├── LICENSE
 ├── pyproject.toml            # Python project file
 ├── README.md                 # Project README
-├── uv.lock      
+├── uv.lock
 └── tasks.py                  # Project tasks
 ```
 
