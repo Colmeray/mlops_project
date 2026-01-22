@@ -1,0 +1,23 @@
+substitutions:
+  _REGION: "europe-west1"
+  _REPO: "mlops"
+  _IMAGE: "mlops-train-gpu"
+
+steps:
+- name: "gcr.io/cloud-builders/docker"
+  args:
+  - "build"
+  - "-f"
+  - "dockerfiles/train.gpu.dockerfile"
+  - "-t"
+  - "$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE:$BUILD_ID"
+  - "-t"
+  - "$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE:latest"
+  - "."
+
+- name: "gcr.io/cloud-builders/docker"
+  args:
+  - "push"
+  - "--all-tags"
+  - "$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE"
+
