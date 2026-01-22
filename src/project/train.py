@@ -9,6 +9,8 @@ import hydra
 from project.model import VGG16Transfer
 import wandb
 from omegaconf import OmegaConf
+from loguru import logger
+import time
 
 # ---- NEW IMPORTS TO PROFILER ---- #
 from torch.profiler import profile, ProfilerActivity, record_function
@@ -16,10 +18,10 @@ from torch.profiler import profile, ProfilerActivity, record_function
 
 def get_device() -> torch.device:
     if torch.cuda.is_available():
-        print("cuda virker!!")
+        print("cuda virker!!" , Flush = True)
         return torch.device("cuda")
     if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-        print("Sindssyg mac M-chip aktiveret!")
+        print("Sindssyg mac M-chip aktiveret!" , flush= True)
         return torch.device("mps")
     return torch.device("cpu")
 
@@ -119,6 +121,7 @@ def train_impl(cfg, max_batches: int | None = None):
         # ================================================
 
         for epoch in range(1, epochs + 1):
+            tid_start = time.perf_counter()
             print(f"epoch {epoch} is running:\n", flush=True)
             model.train()
             
@@ -148,12 +151,15 @@ def train_impl(cfg, max_batches: int | None = None):
                 pred = logits.argmax(dim=1)
                 correct += (pred == y).sum().item()
                 total += y.size(0)
-
-                print(f"{epoch} : {loss.item()}", flush=True)
+                if batch_idx % 10 == 0:
+                    logger.info(f"epoch: {epoch} , batch:{batch_idx}/{len(train_loader)}")
+                    logger.info(f"total time in epoch: {time.perf_counter - tid_start}")
+                # print(f"{epoch} : {loss.item()}", flush=True)
 
 
                 # ---- MEGET VIGTIGT: STEP PROFILEREN HVER BATCH ----
                 prof.step()
+            
 
             train_loss /= total
             train_acc = correct / total
