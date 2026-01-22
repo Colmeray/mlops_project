@@ -1,0 +1,21 @@
+workerPoolSpecs:
+  - replicaCount: 1
+    machineSpec:
+      machineType: n1-standard-8
+    containerSpec:
+      imageUri: europe-west1-docker.pkg.dev/feisty-well-484209-t0/mlops/mlops-train-gpu:latest
+      command: ["sh", "-lc"]
+      args:
+        - |
+          uv run -m project.data ensure-dataset && \
+          uv run -m project.data preprocess \
+            --raw-root data/raw/house_plant_species \
+            --out-root data/preprocessed && \
+          uv run -m project.train
+      env:
+        - name: WANDB_API_KEY
+          value: "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"
+        - name: KAGGLE_USERNAME
+          value: "gustavbellaiche"
+        - name: KAGGLE_KEY
+          value: "KGAT_51751757ea1e1dff69e9935d7ed751a4"
