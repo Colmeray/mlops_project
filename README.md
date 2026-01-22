@@ -70,7 +70,7 @@ The directory structure of the project looks like this:
 # Instructions
 
 ### initialization and data
-Start off by cloning the remote repo and getting the right dependecies with uv
+Start off by cloning the remote repo and getting the right dependencies with uv
 ```bash
 git clone https://github.com/Colmeray/mlops_project.git
 cd mlops_project

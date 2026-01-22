@@ -203,13 +203,13 @@ def train_impl(cfg, max_batches: int | None = None):
             logger.info(f"train loss {train_loss:.4f} acc {train_acc:.3f} | ")
             logger.info(f"val loss {val_loss:.4f} acc {val_acc:.3f}")
 
-            # i know i should have defined a varible: but it's too late now :D
+            # i know i should have defined a variable: but it's too late now :D
             if (time.perf_counter() - tid_start) * (epochs - epoch + 1) > 60 * 60 * 24:
-                logger.critical(f"estimated time to finish: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
+                logger.critical(f"estimated time to finish: {(time.perf_counter() - tid_start) * (epochs - epoch + 1)}")
             elif (time.perf_counter() - tid_start) * (epochs - epoch + 1) > 60 * 60 * 4:
-                logger.warning(f"estimated time to finish: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
+                logger.warning(f"estimated time to finish: {(time.perf_counter() - tid_start) * (epochs - epoch + 1)}")
             else:
-                logger.info(f"estimated time to finish: {(time.perf_counter() - tid_start)*(epochs - epoch +1)}")
+                logger.info(f"estimated time to finish: {(time.perf_counter() - tid_start) * (epochs - epoch + 1)}")
 
                 wandb.log(
                     {
