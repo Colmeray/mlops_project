@@ -37,6 +37,10 @@ def train_impl(cfg, max_batches: int | None = None):
             transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
         ]
     )
+
+    if cfg.get("smoke_test", False):
+        cfg.wandb.enable = False
+
     # Allow overriding paths (useful for tests/CI); keep defaults for normal runs.
     processed_root = Path(cfg.get("processed_root", "data/preprocessed"))
 
