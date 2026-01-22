@@ -22,9 +22,12 @@ repos:
     hooks:
     -   id: black
 
-# ---- Type checking (valgfrit men godt) ----
--   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.6.1
-    hooks:
-    -   id: mypy
-    files: src/
+# ---- Type checking ----
+- repo: local
+  hooks:
+    - id: mypy
+      name: mypy (via uv)
+      entry: uv run mypy --explicit-package-bases --config-file pyproject.toml
+      language: system
+      types: [python]
+      files: ^(src)/.*\.py$

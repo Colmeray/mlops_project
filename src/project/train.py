@@ -2,8 +2,8 @@ from pathlib import Path
 import torch
 from torch import nn
 from torch.utils.data import DataLoader, Subset, random_split
-from project.data import MyDataset   # adjust import
-from project.model import SimpleModel      # adjust import
+from project.data import MyDataset  # adjust import
+from project.model import SimpleModel  # adjust import
 from torchvision import transforms
 import hydra
 from project.model import VGG16Transfer
@@ -30,12 +30,13 @@ def train_impl(cfg, max_batches: int | None = None):
             project="mlops_project",
             config=OmegaConf.to_container(cfg, resolve=True),
         )
-    transform = transforms.Compose([
-    transforms.Resize((224, 224)),   # pick size your model expects
-    transforms.ToTensor(),
-    transforms.Normalize(mean=(0.485, 0.456, 0.406),
-                     std=(0.229, 0.224, 0.225))
-    ])      
+    transform = transforms.Compose(
+        [
+            transforms.Resize((224, 224)),  # pick size your model expects
+            transforms.ToTensor(),
+            transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+        ]
+    )
     processed_root = Path("data/preprocessed")
 
     # KaggleHub symlinker typisk data/raw -> .../versions/4
@@ -46,8 +47,10 @@ def train_impl(cfg, max_batches: int | None = None):
     print("processed_root =", processed_root, flush=True)
     print("raw_root       =", raw_root, flush=True)
 
-    dataset = MyDataset(processed_root=processed_root, raw_root=raw_root,transform=transform)  
-    num_classes = dataset.num_classes 
+    dataset = MyDataset(
+        processed_root=processed_root, raw_root=raw_root, transform=transform
+    )
+    num_classes = dataset.num_classes
 
     if cfg.get("smoke_test", False):
         dataset = torch.utils.data.Subset(dataset, range(min(16, len(dataset))))
@@ -81,7 +84,9 @@ def train_impl(cfg, max_batches: int | None = None):
     if cfg.model.name == "simple":
         model = SimpleModel(num_classes=num_classes).to(device)
     elif cfg.model.name == "vgg16":
-        model = VGG16Transfer(num_classes=num_classes,freeze_features=cfg.model.freeze_features).to(device)
+        model = VGG16Transfer(
+            num_classes=num_classes, freeze_features=cfg.model.freeze_features
+        ).to(device)
 
     loss_fn = nn.CrossEntropyLoss()
     params = [p for p in model.parameters() if p.requires_grad]
@@ -99,29 +104,28 @@ def train_impl(cfg, max_batches: int | None = None):
         profile_memory=False,
         with_stack=False,
     ) as prof:
-
-    # with profile(
-    #     activities=[
-    #         ProfilerActivity.CPU,
-    #         ProfilerActivity.CUDA,   # vigtigt hvis du bruger GPU
-    #     ],
-    #     schedule=torch.profiler.schedule(
-    #         wait=1,        # ignorer første batch
-    #         warmup=1,      # warmup
-    #         active=3,      # profiler 3 batches
-    #         repeat=2       # gentag 2 gange
-    #     ),
-    #     on_trace_ready=torch.profiler.tensorboard_trace_handler("./profiler_logs"),
-    #     record_shapes=True,
-    #     profile_memory=True,
-    #     with_stack=True,
-    # ) as prof:
+        # with profile(
+        #     activities=[
+        #         ProfilerActivity.CPU,
+        #         ProfilerActivity.CUDA,   # vigtigt hvis du bruger GPU
+        #     ],
+        #     schedule=torch.profiler.schedule(
+        #         wait=1,        # ignorer første batch
+        #         warmup=1,      # warmup
+        #         active=3,      # profiler 3 batches
+        #         repeat=2       # gentag 2 gange
+        #     ),
+        #     on_trace_ready=torch.profiler.tensorboard_trace_handler("./profiler_logs"),
+        #     record_shapes=True,
+        #     profile_memory=True,
+        #     with_stack=True,
+        # ) as prof:
         # ================================================
 
         for epoch in range(1, epochs + 1):
             print(f"epoch {epoch} is running:\n", flush=True)
             model.train()
-            
+
             train_loss = 0.0
             correct = 0
             total = 0
@@ -150,7 +154,6 @@ def train_impl(cfg, max_batches: int | None = None):
                 total += y.size(0)
 
                 print(f"{epoch} : {loss.item()}", flush=True)
-
 
                 # ---- MEGET VIGTIGT: STEP PROFILEREN HVER BATCH ----
                 prof.step()
@@ -181,14 +184,16 @@ def train_impl(cfg, max_batches: int | None = None):
             val_acc = val_correct / val_total
 
             if cfg.wandb.enable:
-                wandb.log({
-                    "epoch": epoch,
-                    "train_loss": train_loss,
-                    "train_acc": train_acc,
-                    "val_loss": val_loss,
-                    "val_acc": val_acc,
-                    "lr": cfg.lr,
-                })
+                wandb.log(
+                    {
+                        "epoch": epoch,
+                        "train_loss": train_loss,
+                        "train_acc": train_acc,
+                        "val_loss": val_loss,
+                        "val_acc": val_acc,
+                        "lr": cfg.lr,
+                    }
+                )
 
             print(
                 f"Epoch {epoch:02d} | "
