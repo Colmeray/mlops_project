@@ -334,7 +334,7 @@ Additionally, DVC would allow us to store large files outside Git while still ke
 
 We use GitHub Actions for continuous integration in our project. Our CI setup consists of several automated workflows that run whenever changes are pushed to the main branch or when a pull request is opened.
 
-We have a unit testing workflow that runs our tests using pytest on multiple operating systems (Ubuntu, macOS, and Windows) and on multiple Python versions (3.11 and 3.12). This ensures that our code works consistently across different environments. The workflow also uses caching to speed up dependency installation.
+We have a unit testing workflow that runs our tests using pytest on multiple operating systems (Ubuntu, macOS, and Windows). This ensures that our code works consistently across different environments. The workflow also uses caching to speed up dependency installation.
 
 We also have a linting workflow based on ruff, which checks code formatting and quality on every push and pull request. This helps us catch errors early and keep the code readable and consistent.
 
@@ -593,7 +593,7 @@ This approach would allow the model to be used by other systems in a simple and 
 >
 > Answer:
 
-We did not deploy an API for this project. The main reason is that the focus of the project was on building and validating a reproducible machine learning pipeline, including data preprocessing, model training, testing, and continuous integration, rather than on serving the model as a web service.
+We did not deploy an API for this project. The main reason is that the focus of the project was on building and validating a reproducible machine learning pipeline, including data preprocessing, model training, testing, and continuous integration.
 
 Deploying the model as an API would require building and maintaining a separate service layer, handling user requests, and ensuring that the model runs reliably in a production setting. This was part of the assignment, but we did not manage to complete this step within the project.
 
