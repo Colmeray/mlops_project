@@ -62,7 +62,7 @@ def preprocess(
     class_to_idx = {c: i for i, c in enumerate(classes)}
     idx_to_class = {i: c for c, i in class_to_idx.items()}
 
-    #write mapping
+    # write mapping
     (meta_dir / "classes.json").write_text(
         json.dumps(
             {
@@ -77,7 +77,7 @@ def preprocess(
         encoding="utf-8",
     )
 
-    #write one big index CSV
+    # write one big index CSV
     lines = ["relpath,label,class_name"]
     n = 0
     for class_name in classes:

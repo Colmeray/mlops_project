@@ -407,7 +407,7 @@ In the first image a short run from a locally run training of the simple model c
 On this second image we see that our config parameters for this specific run is also stored in weights and biases which also ensures that we know exactly what we ran so it can be reproduced.
 
 ![Cloud run VGG16](figures/WandB3.png)
-Here we see the VGG16 trained in cloud on a virtual machine we get better accuracy using this model as it is bigger. It is pretrained on 
+Here we see the VGG16 trained in cloud on a virtual machine we get better accuracy using this model as it is bigger. It is pretrained on
 We also could train it for more epochs but we see that the model start to overfit as we run more epochs as the validation accuracy start to decrease as the training accuracy increases so an optimal model would maybe be around the 4-5 epoch.
 
 We also inspected GPU/CPU usage or other such system metrics to make sure that the model was running and using the GPU/CPU for example when running the training in the cloud.
@@ -456,7 +456,7 @@ the dockerfiles can be found in the dockerfile folder in the repo for example: d
 
 The group members used different approaches for debugging for example some did the old fashioned combination of print statements and running code in bits in a ipynb file. Some also used the python inbuilt debugger pdb. We also relied on pytest tests and pre-commit hooks (Ruff, Black, and mypy) to catch syntax errors, formatting problems, and simple logic mistakes early. When dependency or environment issues occurred, we reproduced the problem inside our Docker container to ensure that the error was not caused by local setup differences.
 
-We also experimented with profiling using PyTorch’s built-in profiler. By running a short profiling session during training, we could inspect which parts of the training loop were most expensive. 
+We also experimented with profiling using PyTorch’s built-in profiler. By running a short profiling session during training, we could inspect which parts of the training loop were most expensive.
 
 We do not consider the code perfect, but the combination of debugging, testing, and profiling helped us improve stability and performance.
 
@@ -503,7 +503,7 @@ We used googles compute engine as the backbone for experimenting with different 
 
 Once the pipeline was stable, we moved to our first GPU-enabled setup (VM 1), using a g2-standard-8 instance with an NVIDIA L4 GPU. We successfully trained the model on this machine; however, the performance did not exceed what we could already achieve on our local GPUs. As a result, these runs were mainly used for validation and were not included in our final results.
 
-Afterwards we experimented with larger and more expensive GPU configurations - as we had many credits left xD. 
+Afterwards we experimented with larger and more expensive GPU configurations - as we had many credits left xD.
 In particular, we used an n1-standard-16 instance equipped with an NVIDIA Tesla P100 (16 GB VRAM). On this machine, we tuned parameters such as num_workers and batch size to address data-loading bottlenecks. Despite these efforts, we were not able to fully stabilize or optimize the training setup, and the configuration never performed reliably enough to be used for final training.
 
 
@@ -659,7 +659,7 @@ Monitoring would therefore help maintain the reliability and accuracy of the sys
 >
 > Answer:
 
-Group member 1 used 38.31 dollars where 37.74 dollars where used on compute enegine 
+Group member 1 used 38.31 dollars where 37.74 dollars where used on compute enegine
 
 group member 2 used 1 dollar and was likewise mainly used on compute engine
 
