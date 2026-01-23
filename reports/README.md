@@ -625,7 +625,7 @@ Monitoring would therefore help maintain the reliability and accuracy of the sys
 >
 > Answer:
 
---- question 28 fill here ---
+Nothing new was implemented.
 
 ### Question 29
 
@@ -656,6 +656,11 @@ Monitoring would therefore help maintain the reliability and accuracy of the sys
 >
 > Answer:
 
+The biggest challenge for us was definitely the cloud setup (GCP). We spent almost three full project days working only on it, and it quickly became a repeated pattern: things that worked locally did not work in the cloud environment. Even worse, when we managed to fix one issue, it often introduced new problems somewhere else in the pipeline. Overall, cloud deployment became a major obstacle because it forced us to spend a lot of time debugging environment issues instead of focusing on model development.
+
+The reason for this was mainly that the cloud environment behaved differently from our local setup, even when using the same code and configuration. For example, our Dockerfile worked reliably on our local machines together with Weights & Biases, but on GCP it sometimes failed without a clear explanation. In some cases, the container would build successfully but crash during execution or fail to connect properly. We never found one single root cause, but it likely involved differences in permissions, networking, container runtime behavior, or authentication configuration. Eventually, after multiple attempts and adjustments, we managed to get it working in the cloud as well.
+
+In addition, we tried to rent a GPU instance to make the workflow scalable and more realistic, but this introduced new problems. We struggled to configure our uv and pyproject.toml dependencies to support GPU-enabled installations. Small version mismatches between CUDA-related packages and the PyTorch ecosystem caused installation failures or runtime errors. This highlighted how fragile ML environments can be when switching between CPU and GPU setups, especially in the cloud.
 
 
 ### Question 31
