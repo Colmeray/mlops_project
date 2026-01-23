@@ -197,7 +197,25 @@ For a new member to get an exact copy of the environment they would need to do t
 >
 > Answer:
 
---- question 5 fill here ---
+we used the templated given to us by nicki and filled the files given. we then deleted the folowing files:
+
+deleted:        dockerfiles/api.dockerfile
+deleted:        models/.gitkeep
+deleted:        notebooks/.gitkeep
+deleted:        src/project/api.py
+deleted:        src/project/evaluate.py
+deleted:        src/project/visualize.py
+deleted:        tests/test_api.py
+
+since we didn’t save our models and we didn’t implement any evaluation pipeline. Of course, these components should have been included if this project was built for real customers or production use.
+
+Instead, we added the following folders/files:
+
+wandb/
+profilerlogs/
+cloudbuild, custom_job, env.
+
+The wandb folder was added to track our training runs in the cloud (metrics, logs, and model performance). The profilerlogs and cloudbuilder folders were added to support running in the cloud and to collect profiling data, so we could better monitor performance and investigate whether the code could be optimized.
 
 ### Question 6
 
