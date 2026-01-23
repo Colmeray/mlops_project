@@ -197,7 +197,25 @@ For a new member to get an exact copy of the environment they would need to do t
 >
 > Answer:
 
---- question 5 fill here ---
+we used the templated given to us by nicki and filled the files given. we then deleted the folowing files:
+
+deleted:        dockerfiles/api.dockerfile
+deleted:        models/.gitkeep
+deleted:        notebooks/.gitkeep
+deleted:        src/project/api.py
+deleted:        src/project/evaluate.py
+deleted:        src/project/visualize.py
+deleted:        tests/test_api.py
+
+since we didn’t save our models and we didn’t implement any evaluation pipeline. Of course, these components should have been included if this project was built for real customers or production use.
+
+Instead, we added the following folders/files:
+
+wandb/
+profilerlogs/
+cloudbuild, custom_job, env.
+
+The wandb folder was added to track our training runs in the cloud (metrics, logs, and model performance). The profilerlogs and cloudbuilder folders were added to support running in the cloud and to collect profiling data, so we could better monitor performance and investigate whether the code could be optimized.
 
 ### Question 6
 
@@ -461,8 +479,6 @@ Google Cloud Storage (GCS) was used as a central storage for datasets, trained m
 
 Artifact Registry was used to store our Docker images so they could be pulled directly to the cloud VMs when running experiments or deployments.
 
-Cloud Logging was used to collect logs from our training runs and Docker containers, making it easier to debug errors and monitor experiments.
-
 Together, these services formed a simple but reliable cloud-based MLOps pipeline.
 
 ### Question 18
@@ -670,7 +686,17 @@ Nothing new was implemented.
 >
 > Answer:
 
---- question 29 fill here ---
+The starting point of our system is the local development environment, which is based on a Cookiecutter project template. Locally, we use Hydra for configuration management, PyTorch for model training, Weights & Biases (WandB) for experiment tracking, and Docker to ensure a reproducible runtime. Dependencies are handled with uv, and the codebase is continuously tested using pytest. For debugging and performance analysis, we also use local profiling tools. Data is initially downloaded from Kaggle and stored locally during development.
+
+All code is version-controlled using Git. Whenever changes are pushed to GitHub, a GitHub Actions workflow is triggered. This pipeline runs unit tests, code quality checks (pre-commit, mypy, ruff), and ensures the project is stable before being deployed. If the pipeline succeeds, Google Cloud Build is triggered to build a Docker image of the project.
+
+The built image is then stored in Google Artifact Registry, which acts as a container image repository for the project. From there, the image is pulled and executed on Google Compute Engine (GCE), where the actual training jobs run in the cloud.
+
+During training in GCP, the model logs metrics and artifacts to WandB, while larger artifacts such as datasets, trained models, and logs are stored in a Google Cloud Storage (GCS) bucket. This bucket is also accessible from the local environment, enabling smooth synchronization of data and results between local development and cloud training.
+
+Overall, the system forms a complete MLOps loop: local development and testing → version control → automated CI/CD → containerized deployment → cloud training → experiment tracking and artifact storage → feedback to local development. This architecture ensures reproducibility, scalability, and traceability across the entire machine learning workflow.
+
+![Overall pipeline](figures/pipeline.png)
 
 ### Question 30
 
@@ -708,7 +734,6 @@ In addition, we tried to rent a GPU instance to make the workflow scalable and m
 > Answer:
 
 --- question 31 fill here ---
-
 
 Student s245509 Was in charge on writing the training and data handling code and making sure it worked and doing profiling
 
