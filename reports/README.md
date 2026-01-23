@@ -623,7 +623,7 @@ Monitoring would therefore help maintain the reliability and accuracy of the sys
 >
 > Answer:
 
---- question 28 fill here ---
+Nothing new was implemented.
 
 ### Question 29
 
