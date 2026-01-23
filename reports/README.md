@@ -447,7 +447,17 @@ We do not consider the code perfect, but the combination of debugging, testing, 
 >
 > Answer:
 
---- question 17 fill here ---
+In our project we used several Google Cloud Platform (GCP) services to run experiments, store data, and deploy our training pipeline.
+
+Google Compute Engine (GCE) was used to run virtual machines for training and experiments. It allowed us to run our Docker containers on cloud hardware instead of locally, making it possible to scale experiments and use more compute power when needed.
+
+Google Cloud Storage (GCS) was used as a central storage for datasets, trained models, and logs. It made it easy to share artifacts between team members and across machines.
+
+Artifact Registry was used to store our Docker images so they could be pulled directly to the cloud VMs when running experiments or deployments.
+
+Cloud Logging was used to collect logs from our training runs and Docker containers, making it easier to debug errors and monitor experiments.
+
+Together, these services formed a simple but reliable cloud-based MLOps pipeline.
 
 ### Question 18
 
