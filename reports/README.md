@@ -334,7 +334,7 @@ Additionally, DVC would allow us to store large files outside Git while still ke
 
 We use GitHub Actions for continuous integration in our project. Our CI setup consists of several automated workflows that run whenever changes are pushed to the main branch or when a pull request is opened.
 
-We have a unit testing workflow that runs our tests using pytest on multiple operating systems (Ubuntu, macOS, and Windows) and on multiple Python versions (3.11 and 3.12). This ensures that our code works consistently across different environments. The workflow also uses caching to speed up dependency installation.
+We have a unit testing workflow that runs our tests using pytest on multiple operating systems (Ubuntu, macOS, and Windows). This ensures that our code works consistently across different environments. The workflow also uses caching to speed up dependency installation.
 
 We also have a linting workflow based on ruff, which checks code formatting and quality on every push and pull request. This helps us catch errors early and keep the code readable and consistent.
 
