@@ -382,7 +382,13 @@ We ensured reproducibility by combining Hydra configs fixed random seeds and sam
 >
 > Answer:
 
---- question 14 fill here ---
+![locally run weights and biases](figures/WandB1.png)
+In the first image a short run from a locally run training of the simple model can be seen here we are tracking validation and training accuracy and loss over epochs to get an idea of our models performance and if it is starting to overfit for example, we see that it did not perform so well, which is expected as it is a pretty simple model.
+
+![locally run weights and biases config](figures/WandB2.png)
+On this second image we see that our config parameters for this specific run is also stored in weights and biases which also ensures that we know exactly what we ran so it can be reproduced.
+
+
 
 ### Question 15
 
@@ -483,7 +489,7 @@ Together, these services formed a simple but reliable cloud-based MLOps pipeline
 
 --- question 19 fill here ---
 
-![buckets overview from one user](reports/figures/buckets_jo.png)
+![buckets overview from one user](figures/buckets_jo.png)
 
 
 ### Question 20
@@ -493,7 +499,7 @@ Together, these services formed a simple but reliable cloud-based MLOps pipeline
 >
 > Answer:
 
---- question 20 fill here ---
+![Artifact registry from one user](figures/artifact_registry.png)
 
 ### Question 21
 
@@ -502,6 +508,8 @@ Together, these services formed a simple but reliable cloud-based MLOps pipeline
 >
 > Answer:
 
+![build from user 1](figures/cloud_build_1.png)
+![build from user 2](figures/cloud_build_2.png)
 
 
 ### Question 22
