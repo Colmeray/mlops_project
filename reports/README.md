@@ -499,7 +499,7 @@ Together, these services formed a simple but reliable cloud-based MLOps pipeline
 
 --- question 19 fill here ---
 
-![buckets overview from one user](reports/figures/buckets_jo.png)
+![buckets overview from one user](figures/buckets_jo.png)
 
 
 ### Question 20
@@ -688,7 +688,7 @@ During training in GCP, the model logs metrics and artifacts to WandB, while lar
 
 Overall, the system forms a complete MLOps loop: local development and testing → version control → automated CI/CD → containerized deployment → cloud training → experiment tracking and artifact storage → feedback to local development. This architecture ensures reproducibility, scalability, and traceability across the entire machine learning workflow.
 
-![Overall pipeline](reports/figures/pipeline.png)
+![Overall pipeline](figures/pipeline.png)
 
 ### Question 30
 
