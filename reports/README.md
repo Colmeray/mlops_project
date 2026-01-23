@@ -87,7 +87,7 @@ will check the repositories and the code to verify your answers.
 * [x] Add a continues workflow that triggers when changes to the model registry is made (M19)
 * [x] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
 * [ ] Create a trigger workflow for automatically building your docker images (M21)
-* [ ] Get your model training in GCP using either the Engine or Vertex AI (M21)
+* [x] Get your model training in GCP using either the Engine or Vertex AI (M21)
 * [ ] Create a FastAPI application that can do inference using your model (M22)
 * [ ] Deploy your model in GCP using either Functions or Run as the backend (M23)
 * [ ] Write API tests for your application and setup continues integration for these (M24)
@@ -111,10 +111,10 @@ will check the repositories and the code to verify your answers.
 
 * [ ] Write some documentation for your application (M32)
 * [ ] Publish the documentation to GitHub Pages (M32)
-* [ ] Revisit your initial project description. Did the project turn out as you wanted?
-* [ ] Create an architectural diagram over your MLOps pipeline
-* [ ] Make sure all group members have an understanding about all parts of the project
-* [ ] Uploaded all your code to GitHub
+* [x] Revisit your initial project description. Did the project turn out as you wanted?
+* [x] Create an architectural diagram over your MLOps pipeline
+* [x] Make sure all group members have an understanding about all parts of the project
+* [x] Uploaded all your code to GitHub
 
 ## Group information
 
@@ -152,7 +152,7 @@ Yes, we used two open-source packages that were not covered in the course: kaggl
 
 We used kagglehub to automatically download and cache the dataset from Kaggle, which made the data acquisition step fully reproducible and removed the need for manual downloads.
 
-We used Pillow (PIL) to load and process images before converting them to tensors for training. It allowed us to easily open, convert, and validate image files in different formats.
+We used Pillow to load and process images before converting them to tensors for training. It allowed us to easily open, convert, and validate image files in different formats.
 
 All other libraries used in the project (such as PyTorch and Typer) were already part of the course framework.
 
@@ -407,6 +407,7 @@ In the first image a short run from a locally run training of the simple model c
 On this second image we see that our config parameters for this specific run is also stored in weights and biases which also ensures that we know exactly what we ran so it can be reproduced.
 
 
+We also inspected GPU/CPU usage or other such metrics to make sure that the model was running and using the GPU/CPU for example when running the training in the cloud.
 
 ### Question 15
 
@@ -452,7 +453,7 @@ Link to Dockerfile: dockerfiles/train.dockerfile
 
 When we encountered bugs during development, we mainly used a combination of print statements and running the code in small steps to identify where errors occurred. We also relied on pytest tests and pre-commit hooks (Ruff, Black, and mypy) to catch syntax errors, formatting problems, and simple logic mistakes early. When dependency or environment issues occurred, we reproduced the problem inside our Docker container to ensure that the error was not caused by local setup differences.
 
-We also experimented with profiling using PyTorch’s built-in profiler. By running a short profiling session during training, we could inspect which parts of the training loop were most expensive. This helped us verify that the forward pass and backpropagation dominated runtime, which is expected for deep learning models.
+We also experimented with profiling using PyTorch’s built-in profiler. By running a short profiling session during training, we could inspect which parts of the training loop were most expensive. 
 
 We do not consider the code perfect, but the combination of debugging, testing, and profiling helped us improve stability and performance.
 
@@ -471,15 +472,15 @@ We do not consider the code perfect, but the combination of debugging, testing, 
 >
 > Answer:
 
-In our project we used several Google Cloud Platform (GCP) services to run experiments, store data, and deploy our training pipeline.
+In our project we used several Google Cloud Platform services to run experiments, store data, and deploy our training pipeline.
 
-Google Compute Engine (GCE) was used to run virtual machines for training and experiments. It allowed us to run our Docker containers on cloud hardware instead of locally, making it possible to scale experiments and use more compute power when needed.
+Google Compute Engine was used to run virtual machines for training and experiments. It allowed us to run our Docker containers on cloud hardware instead of locally, making it possible to scale experiments and use more compute power when needed.
 
-Google Cloud Storage (GCS) was used as a central storage for datasets, trained models, and logs. It made it easy to share artifacts between team members and across machines.
+Google Cloud Storage was used as a central storage for datasets, trained models, and logs. It made it easy to share artifacts between team members and across machines.
 
-Artifact Registry was used to store our Docker images so they could be pulled directly to the cloud VMs when running experiments or deployments.
+Artifact Registry was used to store and build our Docker images so they could be pulled directly to the cloud VMs when running experiments or deployments.
 
-Together, these services formed a simple but reliable cloud-based MLOps pipeline.
+Together, these services formed a simple but reliable cloud-based MLOps pipeline. It should be mentioned because we had problems with implementing buckets in this pipeline we just downloaded the dataset from kaggle in the VM's so we didnt really use the cloud storage directly, as it can also be seen from the data.py file there is no such implementation of GCS but other branches such as jonathans_branch has implemented this but couldnt get it to work in cloud.
 
 ### Question 18
 
@@ -494,7 +495,15 @@ Together, these services formed a simple but reliable cloud-based MLOps pipeline
 >
 > Answer:
 
---- question 18 fill here ---
+
+We used Google Compute Engine as the backbone for experimenting with different training setups and GPU configurations. We initially started by getting the full training pipeline to run on a standard Compute Engine VM without a GPU, focusing on correctness, data loading, and reproducibility before introducing hardware acceleration.
+
+Once the pipeline was stable, we moved to our first GPU-enabled setup (VM 1), using a g2-standard-8 instance with an NVIDIA L4 GPU. We successfully trained the model on this machine; however, the performance did not exceed what we could already achieve on our local GPUs. As a result, these runs were mainly used for validation and were not included in our final results.
+
+Afterwards we experimented with larger and more expensive GPU configurations - as we had many credits left xD. 
+In particular, we used an n1-standard-16 instance equipped with an NVIDIA Tesla P100 (16 GB VRAM). On this machine, we tuned parameters such as num_workers and batch size to address data-loading bottlenecks. Despite these efforts, we were not able to fully stabilize or optimize the training setup, and the configuration never performed reliably enough to be used for final training.
+
+
 
 ### Question 19
 
@@ -541,7 +550,11 @@ Together, these services formed a simple but reliable cloud-based MLOps pipeline
 >
 > Answer:
 
-We managed to train it in cloud engine but only partially as we had some problems with getting the updates to weights and biases
+We managed to train our model in the cloud using Google Vertex AI Custom Jobs. The training code was packaged into a Docker container, which included our preprocessing pipeline, training script, and configuration files. The container image was built and pushed to Google Artifact Registry, and then executed on Vertex AI using a custom job specification. This allowed us to reproduce the exact same training setup that we used locally, but in a scalable cloud environment.
+
+In addition to Vertex AI, we also trained and debugged the model directly on Google Compute Engine using a GPU-accelerated virtual machine. We provisioned a Compute Engine instance (n1-standard-16) equipped with an NVIDIA Tesla P100 GPU (16 GB VRAM), which allowed us to iterate more interactively during development and troubleshooting. The VM was configured with a Debian-based operating system, where we manually installed the NVIDIA driver to enable CUDA support and verified GPU availability using nvidia-smi.
+
+The training environment was set up using the same dependency configuration as in the Vertex AI container, ensuring consistency between local, VM-based, and managed training. The dataset was downloaded and preprocessed directly on the VM using our custom CLI commands, and training was executed using PyTorch with Weights & Biases for experiment tracking.
 
 ## Deployment
 
@@ -688,11 +701,11 @@ Nothing new was implemented.
 
 The starting point of our system is the local development environment, which is based on a Cookiecutter project template. Locally, we use Hydra for configuration management, PyTorch for model training, Weights & Biases (WandB) for experiment tracking, and Docker to ensure a reproducible runtime. Dependencies are handled with uv, and the codebase is continuously tested using pytest. For debugging and performance analysis, we also use local profiling tools. Data is initially downloaded from Kaggle and stored locally during development.
 
-All code is version-controlled using Git. Whenever changes are pushed to GitHub, a GitHub Actions workflow is triggered. This pipeline runs unit tests, code quality checks (pre-commit, mypy, ruff), and ensures the project is stable before being deployed. If the pipeline succeeds, Google Cloud Build is triggered to build a Docker image of the project.
+All code is version-controlled using Git. Whenever changes are pushed to GitHub, a GitHub Actions workflow is triggered. This pipeline runs unit tests, code quality checks (pre-commit, mypy, ruff), and ensures the project is stable before being deployed. If the pipeline succeeds, Google Cloud Build is triggered to build a docker image of the project.
 
-The built image is then stored in Google Artifact Registry, which acts as a container image repository for the project. From there, the image is pulled and executed on Google Compute Engine (GCE), where the actual training jobs run in the cloud.
+The built image is then stored in google artifact registry, which acts as a container image repository for the project. From there, the image is pulled and executed on google compute engine where the actual training jobs run in the cloud.
 
-During training in GCP, the model logs metrics and artifacts to WandB, while larger artifacts such as datasets, trained models, and logs are stored in a Google Cloud Storage (GCS) bucket. This bucket is also accessible from the local environment, enabling smooth synchronization of data and results between local development and cloud training.
+During training in GCP, the model logs metrics and artifacts to WandB. We tried to implement the data the bucket in our pipeline but couldnt get it to work, but ideally this would have been implemented aswell.
 
 Overall, the system forms a complete MLOps loop: local development and testing → version control → automated CI/CD → containerized deployment → cloud training → experiment tracking and artifact storage → feedback to local development. This architecture ensures reproducibility, scalability, and traceability across the entire machine learning workflow.
 
@@ -710,7 +723,7 @@ Overall, the system forms a complete MLOps loop: local development and testing �
 >
 > Answer:
 
-The biggest challenge for us was definitely the cloud setup (GCP). We spent almost three full project days working only on it, and it quickly became a repeated pattern: things that worked locally did not work in the cloud environment. Even worse, when we managed to fix one issue, it often introduced new problems somewhere else in the pipeline. Overall, cloud deployment became a major obstacle because it forced us to spend a lot of time debugging environment issues instead of focusing on model development.
+The biggest challenge for us was definitely the cloud setup. We spent almost three full project days working only on it, and it quickly became a repeated pattern: things that worked locally did not work in the cloud environment. Even worse, when we managed to fix one issue, it often introduced new problems somewhere else in the pipeline. Overall, cloud deployment became a major obstacle because it forced us to spend a lot of time debugging environment issues instead of focusing on model development.
 
 The reason for this was mainly that the cloud environment behaved differently from our local setup, even when using the same code and configuration. For example, our Dockerfile worked reliably on our local machines together with Weights & Biases, but on GCP it sometimes failed without a clear explanation. In some cases, the container would build successfully but crash during execution or fail to connect properly. We never found one single root cause, but it likely involved differences in permissions, networking, container runtime behavior, or authentication configuration. Eventually, after multiple attempts and adjustments, we managed to get it working in the cloud as well.
 
