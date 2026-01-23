@@ -68,7 +68,7 @@ The directory structure of the project looks like this:
 ```
 
 # Instructions
-
+running the pipeline locally
 ### initialization and data
 Start off by cloning the remote repo and getting the right dependencies with uv
 ```bash
@@ -86,6 +86,8 @@ Preprocessing the data (just label mapping for now) run which stores the meta da
 ```bash
  uv run python src/project/data.py preprocess data/raw/house_plant_species data/preprocessed
 ```
+
+
 
 
 

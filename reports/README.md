@@ -365,7 +365,7 @@ This lets us quickly change batch size, learning rate, model choice and toggle W
 >
 > Answer:
 
-We ensured reproducibility by combining Hydra configs fixed random seeds and same environments. Each run loads a default config.yaml and any CLI overrides are applied explicitly, so the exact hyperparameters are always known. Hydra also saves the full resolved config for every run in the output folder, making it easy to rerun the same setup later. We set a global seed (for Python/NumPy/PyTorch) to make data splits and training as deterministic as possible. In addition, we used Weights & Biases to log the final config, metrics, and artifacts (e.g., model checkpoints), so results are traceable. Finally, we relied on locked dependencies (uv.lock) and Docker to keep the software environment consistent across machines.
+We ensured reproducibility by combining Hydra configs fixed random seeds and same environments. Each run loads a default config.yaml and any CLI overrides are applied explicitly, so the exact hyperparameters are always known. Hydra also saves the full resolved config for every run in the output folder, making it easy to rerun the same setup later. We set a global seed (for Python/NumPy/PyTorch) to make data splits and training as deterministic as possible. In addition, we used Weights & Biases to log the final config, metrics, and artifacts for example model checkpoints, so results are traceable. Finally, we relied on locked dependencies uv.lock and Docker to keep the software environment consistent across machines.
 
 ### Question 14
 
@@ -408,6 +408,8 @@ To run the container:
 "docker run --rm -v $(pwd)/data:/app/data mlops-train"
 
 This mounts the local data directory so that preprocessing results can be reused.
+
+With this setup it uses the default values from config.yaml file and starts training as the container is ran but it would have been useful to have the possibility to override the values in config as CLI arguements but we have some problems with implementing this especially with getting it to work in cloud.
 
 Link to Dockerfile: dockerfiles/train.dockerfile
 
@@ -673,3 +675,16 @@ Monitoring would therefore help maintain the reliability and accuracy of the sys
 > Answer:
 
 --- question 31 fill here ---
+
+
+Student s245509 Was in charge on writing the training and data handling code and making sure it worked and doing profiling
+
+Student s245465 Was in charge on implementing the config and WandB and unit testing
+
+Student s245243 Was in charge of implementing the cloud training and cloud setup.
+
+Student s245647 Was in charge of doing the dockerfiles and Continouis integration setup.
+
+However we would like to emphasize that it was not such a hard split between tasks and that all members more or less helped with mostly every aspect of the report.
+
+We have used ChatGPT to help debug our code and point us in the right directions when we got stuck on some kind of implementation problem, we on purpose did not use Copilot as we thought this would be too "easy" as it would require more work and understanding implementing the answers gotten from chatgpt. Furthermore we used chatGPT to help improve the wording and clarity of some of our self-written answers in this report README file.
