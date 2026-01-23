@@ -455,8 +455,6 @@ Google Cloud Storage (GCS) was used as a central storage for datasets, trained m
 
 Artifact Registry was used to store our Docker images so they could be pulled directly to the cloud VMs when running experiments or deployments.
 
-Cloud Logging was used to collect logs from our training runs and Docker containers, making it easier to debug errors and monitor experiments.
-
 Together, these services formed a simple but reliable cloud-based MLOps pipeline.
 
 ### Question 18
