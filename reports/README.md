@@ -609,7 +609,17 @@ Monitoring would therefore help maintain the reliability and accuracy of the sys
 >
 > Answer:
 
---- question 27 fill here ---
+Group member 1 used 38.31 dollars where 37.74 dollars where used on compute enegine 
+
+group member 2 used 1 dollar and was likewise mainly used on compute engine
+
+group member 3 used 4 dollars also mainly the compute engine
+
+group member 4 used 5 dollars mainly compute engine
+
+In total 48 dollars worth of credits where used in this project.
+
+We see the perks of using cloud especially for training, however because we had so many struggles with getting it to work i think it made us a little demotivated. But when we at some point in our studies have to do bigger projects it is completely unfeasiable to work and train locally so this was a great opportunity to get started with using cloud.
 
 ### Question 28
 
