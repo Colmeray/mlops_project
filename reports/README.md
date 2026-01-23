@@ -580,7 +580,7 @@ This approach would allow the model to be used by other systems in a simple and 
 >
 > Answer:
 
-We did not deploy an API for this project. The main reason is that the focus of the project was on building and validating a reproducible machine learning pipeline, including data preprocessing, model training, testing, and continuous integration, rather than on serving the model as a web service.
+We did not deploy an API for this project. The main reason is that the focus of the project was on building and validating a reproducible machine learning pipeline, including data preprocessing, model training, testing, and continuous integration.
 
 Deploying the model as an API would require building and maintaining a separate service layer, handling user requests, and ensuring that the model runs reliably in a production setting. This was part of the assignment, but we did not manage to complete this step within the project.
 
