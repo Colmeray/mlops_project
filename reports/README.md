@@ -231,7 +231,7 @@ The wandb folder was added to track our training runs in the cloud (metrics, log
 > Answer:
 
 Yes, we used tools to keep the code clean and consistent.
-We used Ruff for both linting and formatting, which helped us automatically find mistakes and keep the same coding style in all files. We also ran these checks using GitHub Actions, so every change is tested before being merged.We used Python type hints in several parts of the project to make it clear what kind of data each function expects and returns.
+We used Ruff for both linting and formatting, which helped us automatically find mistakes and keep the same coding style in all files. We also ran these checks using GitHub Actions, so every change is tested before being merged.
 
 These concepts are important in larger projects because many people may work on the same code. If the code is messy or unclear, it becomes hard to understand and easy to break. Linting, typing, and documentation help make the code easier to read, safer to change, and simpler to maintain.
 
@@ -292,11 +292,11 @@ Code coverage is therefore a useful indicator of how well the project is tested,
 >
 > Answer:
 
-Yes, our workflow made use of both branches and pull requests to structure development and maintain code quality. We followed a branch-based workflow where the main branch represented the stable, working version of the project. Each team member worked on their own feature branch (for example, for data processing or model development), which allowed parallel development without interfering with others’ work.
+Yes, our workflow made use of both branches and pull requests to structure development and maintain code quality. We followed a branch based workflow where the main branch represented the stable, working version of the project. Each team member worked on their own branch, which allowed parallel development without interfering with others’ work.
 
 When a feature was ready, it was merged into main through a pull request. Pull requests were used to review changes, discuss design decisions, and catch potential bugs before they were integrated. This review step helped ensure that new code was consistent with the existing codebase and did not break the pipeline.
 
-Using branches and pull requests also gave us a clear project history and made it easy to revert changes if something went wrong. Overall, this workflow improved collaboration, reduced merge conflicts, and increased the reliability of the codebase.
+Using branches and pull requests also gave us a clear project history and made it easy to revert changes if something went wrong. Overall, this workflow improved collaboration, reduced merge conflicts and increased the reliability of the codebase.
 
 ### Question 10
 
@@ -311,11 +311,11 @@ Using branches and pull requests also gave us a clear project history and made i
 >
 > Answer:
 
-We did not use DVC in our project. However, using DVC would have been beneficial for managing and versioning our dataset and processed data. For example, our project relied on a large image dataset downloaded from Kaggle and later processed into structured metadata (classes.json) and an index file (all.csv).
+We did not use DVC in our project as we only used one stable version of the dataset from kaggle so we did not need to keep many versions of the raw data. However, using DVC would have been beneficial for managing and versioning our dataset and processed data if something changed. For example, our project relied on a large image dataset downloaded from Kaggle and later processed into structured metadata classes.json and an index file "all.csv."
 
-With DVC, we could have tracked different versions of the raw dataset, preprocessing outputs, and even trained model checkpoints in a reproducible way. This would make it easier for team members to retrieve the exact same data state, compare different preprocessing pipelines, and roll back to earlier versions if something went wrong.
+With DVC, we could have tracked different versions of the raw dataset, preprocessing outputs, and even trained model checkpoints in a reproducible way for example if we would contiously get new images to make our model better. This would make it easier for team members to retrieve the exact same data state, compare different preprocessing pipelines, and roll back to earlier versions if something went wrong.
 
-Additionally, DVC would allow us to store large files outside Git while still keeping lightweight pointers under version control, improving collaboration, storage efficiency, and experiment reproducibility.
+Additionally DVC would allow us to store large files outside git while still keeping lightweight pointers under version control, improving collaboration, storage efficiency and experiment reproducibility.
 
 ### Question 11
 
@@ -338,9 +338,9 @@ We have a unit testing workflow that runs our tests using pytest on multiple ope
 
 We also have a linting workflow based on ruff, which checks code formatting and quality on every push and pull request. This helps us catch errors early and keep the code readable and consistent.
 
-In addition, we run a pre-commit workflow that automatically executes all hooks defined in .pre-commit-config.yaml before code can be merged. This enforces basic quality checks such as removing trailing whitespace and validating YAML files.
+In addition, we run a precommit workflow that automatically executes all hooks defined in .pre-commit-config.yaml before code can be merged. This enforces basic quality checks such as removing trailing whitespace and validating YAML files.
 
-To keep our dependencies up to date, we use Dependabot, which automatically creates pull requests when new versions of Python packages are available. We also have a scheduled workflow that updates our pre-commit hooks weekly.
+To keep our dependencies up to date, we use Dependabot, which automatically creates pull requests when new versions of Python packages are available. We also have a scheduled workflow that updates our precommit hooks weekly.
 
 Overall, our CI setup helps prevent bugs, maintain code quality, and keep our project secure and reproducible.
 
@@ -383,7 +383,7 @@ This lets us quickly change batch size, learning rate, model choice and toggle W
 >
 > Answer:
 
-We ensured reproducibility by combining Hydra configs fixed random seeds and same environments. Each run loads a default config.yaml and any CLI overrides are applied explicitly, so the exact hyperparameters are always known. Hydra also saves the full resolved config for every run in the output folder, making it easy to rerun the same setup later. We set a global seed (for Python/NumPy/PyTorch) to make data splits and training as deterministic as possible. In addition, we used Weights & Biases to log the final config, metrics, and artifacts for example model checkpoints, so results are traceable. Finally, we relied on locked dependencies uv.lock and Docker to keep the software environment consistent across machines.
+We ensured reproducibility by combining hydra configs fixed random seeds and same environments. Each run loads a default config.yaml and any CLI overrides are applied explicitly, so the exact hyperparameters are always known. Hydra also saves the full resolved config for every run in the output folder, making it easy to rerun the same setup later. We set a global seed to make data splits and training as deterministic as possible. In addition, we used Weights & Biases to log the final config, metrics, and artifacts for example model checkpoints, so results are traceable. Finally, we relied on locked dependencies uv.lock and Docker to keep the software environment consistent across machines.
 
 ### Question 14
 
@@ -406,8 +406,11 @@ In the first image a short run from a locally run training of the simple model c
 ![locally run weights and biases config](figures/WandB2.png)
 On this second image we see that our config parameters for this specific run is also stored in weights and biases which also ensures that we know exactly what we ran so it can be reproduced.
 
+![Cloud run VGG16](figures/WandB3.png)
+Here we see the VGG16 trained in cloud on a virtual machine we get better accuracy using this model as it is bigger. It is pretrained on 
+We also could train it for more epochs but we see that the model start to overfit as we run more epochs as the validation accuracy start to decrease as the training accuracy increases so an optimal model would maybe be around the 4-5 epoch.
 
-We also inspected GPU/CPU usage or other such metrics to make sure that the model was running and using the GPU/CPU for example when running the training in the cloud.
+We also inspected GPU/CPU usage or other such system metrics to make sure that the model was running and using the GPU/CPU for example when running the training in the cloud.
 
 ### Question 15
 
@@ -422,7 +425,7 @@ We also inspected GPU/CPU usage or other such metrics to make sure that the mode
 >
 > Answer:
 
-We used Docker to create a reproducible environment for training our machine learning models. Instead of relying on local Python installations and system-specific dependencies, we packaged the entire project, including the code, configuration files, and all dependencies, into a Docker image. This ensured that our experiments could be run consistently on different machines.
+We used Docker to create a reproducible environment for training our machine learning models. Instead of relying on local python installations and system specific dependencies, we packaged the entire project including the code, configuration files, and all dependencies, into a Docker image. This ensured that our experiments could be run consistently on different machines.
 
 Our main Docker image is a training container. When the container starts, it automatically downloads the dataset using KaggleHub, preprocesses the images, and runs the training script. This allowed us to validate that the full pipeline works from a clean state.
 
@@ -434,9 +437,9 @@ To run the container:
 
 This mounts the local data directory so that preprocessing results can be reused.
 
-With this setup it uses the default values from config.yaml file and starts training as the container is ran but it would have been useful to have the possibility to override the values in config as CLI arguements but we have some problems with implementing this especially with getting it to work in cloud.
+With this setup it uses the default values from config.yaml file and starts training as the container is ran but it would have been useful to have the possibility to override the values in config as CLI arguements but we have some problems with implementing this with getting it to work in cloud.
 
-Link to Dockerfile: dockerfiles/train.dockerfile
+the dockerfiles can be found in the dockerfile folder in the repo for example: dockerfiles/train.dockerfile
 
 ### Question 16
 
@@ -451,7 +454,7 @@ Link to Dockerfile: dockerfiles/train.dockerfile
 >
 > Answer:
 
-When we encountered bugs during development, we mainly used a combination of print statements and running the code in small steps to identify where errors occurred. We also relied on pytest tests and pre-commit hooks (Ruff, Black, and mypy) to catch syntax errors, formatting problems, and simple logic mistakes early. When dependency or environment issues occurred, we reproduced the problem inside our Docker container to ensure that the error was not caused by local setup differences.
+The group members used different approaches for debugging for example some did the old fashioned combination of print statements and running code in bits in a ipynb file. Some also used the python inbuilt debugger pdb. We also relied on pytest tests and pre-commit hooks (Ruff, Black, and mypy) to catch syntax errors, formatting problems, and simple logic mistakes early. When dependency or environment issues occurred, we reproduced the problem inside our Docker container to ensure that the error was not caused by local setup differences.
 
 We also experimented with profiling using PyTorch’s built-in profiler. By running a short profiling session during training, we could inspect which parts of the training loop were most expensive. 
 
@@ -472,11 +475,11 @@ We do not consider the code perfect, but the combination of debugging, testing, 
 >
 > Answer:
 
-In our project we used several Google Cloud Platform services to run experiments, store data, and deploy our training pipeline.
+In our project we used several google cloud platform services to run experiments, store data, and deploy our training pipeline.
 
 Google Compute Engine was used to run virtual machines for training and experiments. It allowed us to run our Docker containers on cloud hardware instead of locally, making it possible to scale experiments and use more compute power when needed.
 
-Google Cloud Storage was used as a central storage for datasets, trained models, and logs. It made it easy to share artifacts between team members and across machines.
+Google Cloud Storage was used as a central storage for datasets mainly.
 
 Artifact Registry was used to store and build our Docker images so they could be pulled directly to the cloud VMs when running experiments or deployments.
 
@@ -496,7 +499,7 @@ Together, these services formed a simple but reliable cloud-based MLOps pipeline
 > Answer:
 
 
-We used Google Compute Engine as the backbone for experimenting with different training setups and GPU configurations. We initially started by getting the full training pipeline to run on a standard Compute Engine VM without a GPU, focusing on correctness, data loading, and reproducibility before introducing hardware acceleration.
+We used googles compute engine as the backbone for experimenting with different training setups and GPU configurations. We initially started by getting the full training pipeline to run on a standard Compute Engine VM without a GPU, focusing on correctness, data loading, and reproducibility before introducing hardware acceleration, this we used alot of time on.
 
 Once the pipeline was stable, we moved to our first GPU-enabled setup (VM 1), using a g2-standard-8 instance with an NVIDIA L4 GPU. We successfully trained the model on this machine; however, the performance did not exceed what we could already achieve on our local GPUs. As a result, these runs were mainly used for validation and were not included in our final results.
 
@@ -550,9 +553,9 @@ In particular, we used an n1-standard-16 instance equipped with an NVIDIA Tesla 
 >
 > Answer:
 
-We managed to train our model in the cloud using Google Vertex AI Custom Jobs. The training code was packaged into a Docker container, which included our preprocessing pipeline, training script, and configuration files. The container image was built and pushed to Google Artifact Registry, and then executed on Vertex AI using a custom job specification. This allowed us to reproduce the exact same training setup that we used locally, but in a scalable cloud environment.
+We managed to train our model in the cloud using google vertex AI custom jobs. The training code was packaged into a Docker container, which included our preprocessing pipeline, training script, and configuration files. The container image was built and pushed to Google Artifact Registry, and then executed on Vertex AI using a custom job specification. This allowed us to reproduce the exact same training setup that we used locally, but in a scalable cloud environment.
 
-In addition to Vertex AI, we also trained and debugged the model directly on Google Compute Engine using a GPU-accelerated virtual machine. We provisioned a Compute Engine instance (n1-standard-16) equipped with an NVIDIA Tesla P100 GPU (16 GB VRAM), which allowed us to iterate more interactively during development and troubleshooting. The VM was configured with a Debian-based operating system, where we manually installed the NVIDIA driver to enable CUDA support and verified GPU availability using nvidia-smi.
+In addition to Vertex AI, we also trained the model directly on Google Compute Engine using a GPU-accelerated virtual machine. We provisioned a Compute Engine instance (n1-standard-16) equipped with an NVIDIA Tesla P100 GPU (16 GB VRAM), which allowed us to iterate more interactively during development and troubleshooting. The VM was configured with a Debian-based operating system, where we manually installed the NVIDIA driver to enable CUDA support and verified GPU availability using nvidia-smi.
 
 The training environment was set up using the same dependency configuration as in the Vertex AI container, ensuring consistency between local, VM-based, and managed training. The dataset was downloaded and preprocessed directly on the VM using our custom CLI commands, and training was executed using PyTorch with Weights & Biases for experiment tracking.
 
@@ -701,7 +704,7 @@ Nothing new was implemented.
 
 The starting point of our system is the local development environment, which is based on a Cookiecutter project template. Locally, we use Hydra for configuration management, PyTorch for model training, Weights & Biases (WandB) for experiment tracking, and Docker to ensure a reproducible runtime. Dependencies are handled with uv, and the codebase is continuously tested using pytest. For debugging and performance analysis, we also use local profiling tools. Data is initially downloaded from Kaggle and stored locally during development.
 
-All code is version-controlled using Git. Whenever changes are pushed to GitHub, a GitHub Actions workflow is triggered. This pipeline runs unit tests, code quality checks (pre-commit, mypy, ruff), and ensures the project is stable before being deployed. If the pipeline succeeds, Google Cloud Build is triggered to build a docker image of the project.
+All code is version-controlled using Git. Whenever changes are pushed to GitHub, a GitHub Actions workflow is triggered. This pipeline runs unit tests, code quality checks, and ensures the project is stable before being deployed. From here we can built our image in the cloud.
 
 The built image is then stored in google artifact registry, which acts as a container image repository for the project. From there, the image is pulled and executed on google compute engine where the actual training jobs run in the cloud.
 
@@ -758,4 +761,4 @@ Student s245647 Was in charge of doing the dockerfiles and Continouis integratio
 
 However we would like to emphasize that it was not such a hard split between tasks and that all members more or less helped with mostly every aspect of the report.
 
-We have used ChatGPT to help debug our code and point us in the right directions when we got stuck on some kind of implementation problem, we on purpose did not use Copilot as we thought this would be too "easy" as it would require more work and understanding implementing the answers gotten from chatgpt. Furthermore we used chatGPT to help improve the wording and clarity of some of our self-written answers in this report README file.
+We have used ChatGPT to help debug our code and point us in the right directions when we got stuck on some kind of implementation problem, we on purpose did not use Copilot as we thought this would be too "easy" as it would require more work and understanding of the code to be able to implement the answers gotten from chatgpt. Furthermore we used chatGPT to help improve the wording and clarity of some of our selfwritten answers in this report README file. Everything is ofcourse strictly reviewed by us.
