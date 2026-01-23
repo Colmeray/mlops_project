@@ -54,7 +54,7 @@ def preprocess(
     meta_dir.mkdir(parents=True, exist_ok=True)
     index_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1) classes = folder names
+    # classes = folder names
     classes = sorted([d.name for d in raw_root.iterdir() if d.is_dir()])
     if not classes:
         raise ValueError(f"No class folders found in {raw_root}")
@@ -62,7 +62,7 @@ def preprocess(
     class_to_idx = {c: i for i, c in enumerate(classes)}
     idx_to_class = {i: c for c, i in class_to_idx.items()}
 
-    # 2) write mapping
+    #write mapping
     (meta_dir / "classes.json").write_text(
         json.dumps(
             {
@@ -77,7 +77,7 @@ def preprocess(
         encoding="utf-8",
     )
 
-    # 3) write one big index CSV
+    #write one big index CSV
     lines = ["relpath,label,class_name"]
     n = 0
     for class_name in classes:
@@ -135,8 +135,6 @@ class MyDataset(Dataset):
                 if p.suffix.lower() not in IMG_EXTS:
                     continue
                 if not p.exists():
-                    # If you want strictness, raise instead:
-                    # raise FileNotFoundError(f"Image listed in CSV not found: {p}")
                     continue
 
                 self.samples.append((p, label))
@@ -144,7 +142,6 @@ class MyDataset(Dataset):
         if not self.samples:
             raise ValueError(f"No valid images found. Checked CSV: {index_path} with raw_root={self.raw_root}")
 
-        # handy for train.py
         self.num_classes = len(self.classes)
 
     def __len__(self) -> int:

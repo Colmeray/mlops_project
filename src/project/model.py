@@ -2,9 +2,6 @@ from torch import nn
 import torch
 from torchvision import models
 
-## FIXME: billeder skal preprocess til 224x224 før det virker
-# VGG16 bare midlertidigt, :
-
 
 class SimpleModel(nn.Module):
     def __init__(self, num_classes: int):

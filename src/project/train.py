@@ -12,7 +12,6 @@ from omegaconf import OmegaConf
 from loguru import logger
 import time
 
-# ---- NEW IMPORTS TO PROFILER ---- #
 from torch.profiler import profile, ProfilerActivity, record_function
 
 
@@ -35,15 +34,13 @@ def train_impl(cfg, max_batches: int | None = None):
         )
     transform = transforms.Compose(
         [
-            transforms.Resize((224, 224)),  # pick size your model expects
+            transforms.Resize((224, 224)), 
             transforms.ToTensor(),
             transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
         ]
     )
     processed_root = Path("data/preprocessed")
 
-    # KaggleHub symlinker typisk data/raw -> .../versions/4
-    # og selve billederne ligger i house_plant_species/
     candidate = Path("data/raw/house_plant_species")
     raw_root = candidate if candidate.exists() else Path("data/raw")
 
@@ -94,9 +91,8 @@ def train_impl(cfg, max_batches: int | None = None):
     print("training starting", flush=True)
     epochs = cfg.epochs
 
-    # ================== TORCH PROFILER ==================
     with profile(
-        activities=[ProfilerActivity.CPU],  # <- kun CPU på M2
+        activities=[ProfilerActivity.CPU], 
         schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
         on_trace_ready=torch.profiler.tensorboard_trace_handler("./profiler_logs"),
         record_shapes=False,
@@ -159,13 +155,12 @@ def train_impl(cfg, max_batches: int | None = None):
                     logger.info(f"total time in epoch: {time.perf_counter() - tid_start}")
                 # print(f"{epoch} : {loss.item()}", flush=True)
 
-                # ---- MEGET VIGTIGT: STEP PROFILEREN HVER BATCH ----
                 prof.step()
 
             train_loss /= total
             train_acc = correct / total
 
-            # ---- val ----
+            # validation
             model.eval()
             val_loss = 0.0
             val_correct = 0
